@@ -14,7 +14,7 @@
 [![Twitter/X](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/sashimikun_void)
 [![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/VQMBGR8u5v)
 
-[English](./README.md) | [简体中文](./README.zh.md) | [繁體中文](./README.zh-tw.md) | [日本語](./README.ja.md) | [Español](./README.es.md) | [한국어](./README.kr.md) | [Tiếng Việt](./README.vi.md) | [Português Brasileiro](./README.pt-br.md) | [Français](./README.fr.md) | [Русский](./README.ru.md)
+[English](./README.md) | [日本語](./README.ja.md)
 
 ## ✨ Features
 
@@ -86,7 +86,7 @@ OLLAMA_HOST=your_ollama_host
 
 ```bash
 # Install Python dependencies
-python -m pip install poetry==1.8.2 && poetry install -C api
+python -m pip install poetry==2.0.1 && poetry install -C api
 
 # Start the API server
 python -m api.main
@@ -106,12 +106,86 @@ npm run dev
 yarn dev
 ```
 
+#### Alternative: Start Both Frontend and Backend with One Command
+
+If you prefer to start both services with a single command:
+
+```bash
+# Install dependencies for both frontend and backend
+npm install
+python -m pip install poetry==1.8.2 && poetry install -C api
+
+# Start both frontend and backend
+npm run dev:front & npm run dev:backend
+```
+
 #### Step 4: Use DeepWiki!
 
 1. Open [http://localhost:3000](http://localhost:3000) in your browser
 2. Enter a GitHub, GitLab, or Bitbucket repository (like `https://github.com/openai/codex`, `https://github.com/microsoft/autogen`, `https://gitlab.com/gitlab-org/gitlab`, or `https://bitbucket.org/redradish/atlassian_app_versions`)
 3. For private repositories, click "+ Add access tokens" and enter your GitHub or GitLab personal access token
 4. Click "Generate Wiki" and watch the magic happen!
+
+### Option 3: VS Code Dev Containers (Recommended for Development)
+
+If you want to develop DeepWiki using VS Code with Dev Containers:
+
+#### Prerequisites
+
+1. Install [VS Code](https://code.visualstudio.com/)
+2. Install the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+#### Setup Steps
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/AsyncFuncAI/deepwiki-open.git
+   cd deepwiki-open
+   ```
+
+2. **Create a .env file with your API keys**:
+   ```bash
+   echo "GOOGLE_API_KEY=your_google_api_key" > .env
+   echo "OPENAI_API_KEY=your_openai_api_key" >> .env
+   # Optional: Use Google AI embeddings instead of OpenAI (recommended if using Google models)
+   echo "DEEPWIKI_EMBEDDER_TYPE=google" >> .env
+   # Optional: Add OpenRouter API key if you want to use OpenRouter models
+   echo "OPENROUTER_API_KEY=your_openrouter_api_key" >> .env
+   # Optional: Add Ollama host if not local. defaults to http://localhost:11434
+   echo "OLLAMA_HOST=your_ollama_host" >> .env
+   # Optional: Add Azure API key, endpoint and version if you want to use azure openai models
+   echo "AZURE_OPENAI_API_KEY=your_azure_openai_api_key" >> .env
+   echo "AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint" >> .env
+   echo "AZURE_OPENAI_VERSION=your_azure_openai_version" >> .env
+   ```
+
+3. **Open in VS Code**:
+   - Open VS Code
+   - Use `File > Open Folder` to open the `deepwiki-open` directory
+   - When prompted "Folder contains a Dev Container configuration file. Reopen folder locally or reopen folder inside of a container?", click "Reopen in Container"
+   - Alternatively, use Command Palette (`Ctrl+Shift+P`) and select "Dev Containers: Reopen in Container"
+
+4. **Wait for the container to build**:
+   - The first time you open the project, VS Code will build the development container
+   - This may take a few minutes as it installs all dependencies
+
+5. **Start developing**:
+   - Once the container is ready, you can start both frontend and backend with:
+     ```bash
+     npm run dev:front & npm run dev:backend
+     ```
+   - Or run them separately in different terminals
+
+6. **Access the application**:
+   - Open [http://localhost:3000](http://localhost:3000) in your browser
+   - The application will be running inside the container but accessible from your host
+
+#### Benefits of Dev Containers
+
+- **Consistent environment**: Everyone on the team uses the same development environment
+- **No local setup required**: All dependencies are pre-installed in the container
+- **Isolated development**: Your local machine remains clean
+- **Easy onboarding**: New developers can start coding immediately
 
 ## 🔍 How It Works
 
@@ -399,7 +473,7 @@ docker-compose up
 
 | Variable             | Description                                                  | Required | Note                                                                                                     |
 |----------------------|--------------------------------------------------------------|----------|----------------------------------------------------------------------------------------------------------|
-| `GOOGLE_API_KEY`     | Google Gemini API key for AI generation and embeddings      | No | Required for Google Gemini models and Google AI embeddings                                               
+| `GOOGLE_API_KEY`     | Google Gemini API key for AI generation and embeddings      | No | Required for Google Gemini models and Google AI embeddings
 | `OPENAI_API_KEY`     | OpenAI API key for embeddings and models                     | Conditional | Required if using OpenAI embeddings or models                                                            |
 | `OPENROUTER_API_KEY` | OpenRouter API key for alternative models                    | No | Required only if you want to use OpenRouter models                                                       |
 | `AZURE_OPENAI_API_KEY` | Azure OpenAI API key                    | No | Required only if you want to use Azure OpenAI models                                                       |
@@ -414,7 +488,7 @@ docker-compose up
 
 **API Key Requirements:**
 - If using `DEEPWIKI_EMBEDDER_TYPE=openai` (default): `OPENAI_API_KEY` is required
-- If using `DEEPWIKI_EMBEDDER_TYPE=google`: `GOOGLE_API_KEY` is required  
+- If using `DEEPWIKI_EMBEDDER_TYPE=google`: `GOOGLE_API_KEY` is required
 - If using `DEEPWIKI_EMBEDDER_TYPE=ollama`: No API key required (local processing)
 
 Other API keys are only required when configuring and using models from the corresponding providers.
