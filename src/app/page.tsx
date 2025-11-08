@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FaWikipediaW, FaGithub, FaCoffee, FaTwitter } from 'react-icons/fa';
+import { FaWikipediaW } from 'react-icons/fa';
 import ThemeToggle from '@/components/theme-toggle';
 import Mermaid from '../components/Mermaid';
 import ConfigurationModal from '@/components/ConfigurationModal';
@@ -407,28 +407,31 @@ export default function Home() {
     <div className="h-screen paper-texture p-4 md:p-8 flex flex-col">
       <header className="max-w-6xl mx-auto mb-6 h-fit w-full">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-[var(--card-bg)] rounded-lg shadow-custom border border-[var(--border-color)] p-4">
-          <div className="flex items-center">
-            <div className="bg-[var(--accent-primary)] p-2 rounded-lg mr-3">
-              <FaWikipediaW className="text-2xl text-white" />
-            </div>
-            <div className="mr-6">
-              <h1 className="text-xl md:text-2xl font-bold text-[var(--accent-primary)]">
-                {t('common.appName')}
-              </h1>
-              <div className="flex flex-wrap items-baseline gap-x-2 md:gap-x-3 mt-0.5">
-                <p className="text-xs text-[var(--muted)] whitespace-nowrap">
-                  {t('common.tagline')}
-                </p>
-                <div className="hidden md:inline-block">
-                  <Link
-                    href="/wiki/projects"
-                    className="text-xs font-medium text-[var(--accent-primary)] hover:text-[var(--highlight)] hover:underline whitespace-nowrap"
-                  >
-                    {t('nav.wikiProjects')}
-                  </Link>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="bg-[var(--accent-primary)] p-2 rounded-lg mr-3">
+                <FaWikipediaW className="text-2xl text-white" />
+              </div>
+              <div className="mr-6">
+                <h1 className="text-xl md:text-2xl font-bold text-[var(--accent-primary)]">
+                  {t('common.appName')}
+                </h1>
+                <div className="flex flex-wrap items-baseline gap-x-2 md:gap-x-3 mt-0.5">
+                  <p className="text-xs text-[var(--muted)] whitespace-nowrap">
+                    {t('common.tagline')}
+                  </p>
+                  <div className="hidden md:inline-block">
+                    <Link
+                      href="/wiki/projects"
+                      className="text-xs font-medium text-[var(--accent-primary)] hover:text-[var(--highlight)] hover:underline whitespace-nowrap"
+                    >
+                      {t('nav.wikiProjects')}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
+            <ThemeToggle />
           </div>
 
           <form onSubmit={handleFormSubmit} className="flex flex-col gap-3 w-full max-w-3xl">
@@ -502,24 +505,6 @@ export default function Home() {
           {/* Conditionally show processed projects or welcome content */}
           {!projectsLoading && projects.length > 0 ? (
             <div className="w-full">
-              {/* Header section for existing projects */}
-              <div className="flex flex-col items-center w-full max-w-2xl mb-8 mx-auto">
-                <div className="flex flex-col sm:flex-row items-center mb-6 gap-4">
-                  <div className="relative">
-                    <div className="absolute -inset-1 bg-[var(--accent-primary)]/20 rounded-full blur-md"></div>
-                    <FaWikipediaW className="text-5xl text-[var(--accent-primary)] relative z-10" />
-                  </div>
-                  <div className="text-center sm:text-left">
-                    <h2 className="text-2xl font-bold text-[var(--foreground)] font-serif mb-1">
-                      {t('projects.existingProjects')}
-                    </h2>
-                    <p className="text-[var(--accent-primary)] text-sm max-w-md">
-                      {t('projects.browseExisting')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Show processed projects */}
               <ProcessedProjects
                 showHeader={false}
@@ -536,14 +521,6 @@ export default function Home() {
                   <div className="relative">
                     <div className="absolute -inset-1 bg-[var(--accent-primary)]/20 rounded-full blur-md"></div>
                     <FaWikipediaW className="text-5xl text-[var(--accent-primary)] relative z-10" />
-                  </div>
-                  <div className="text-center sm:text-left">
-                    <h2 className="text-2xl font-bold text-[var(--foreground)] font-serif mb-1">
-                      {t('home.welcome')}
-                    </h2>
-                    <p className="text-[var(--accent-primary)] text-sm max-w-md">
-                      {t('home.welcomeTagline')}
-                    </p>
                   </div>
                 </div>
 
@@ -634,42 +611,6 @@ export default function Home() {
           )}
         </div>
       </main>
-
-      <footer className="max-w-6xl mx-auto mt-8 flex flex-col gap-4 w-full">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-[var(--card-bg)] rounded-lg p-4 border border-[var(--border-color)] shadow-custom">
-          <p className="text-[var(--muted)] text-sm font-serif">{t('footer.copyright')}</p>
-
-          <div className="flex items-center gap-6">
-            <div className="flex items-center space-x-5">
-              <a
-                href="https://github.com/AsyncFuncAI/deepwiki-open"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--muted)] hover:text-[var(--accent-primary)] transition-colors"
-              >
-                <FaGithub className="text-xl" />
-              </a>
-              <a
-                href="https://buymeacoffee.com/sheing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--muted)] hover:text-[var(--accent-primary)] transition-colors"
-              >
-                <FaCoffee className="text-xl" />
-              </a>
-              <a
-                href="https://x.com/sashimikun_void"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--muted)] hover:text-[var(--accent-primary)] transition-colors"
-              >
-                <FaTwitter className="text-xl" />
-              </a>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
