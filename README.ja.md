@@ -34,7 +34,7 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/AsyncFuncAI/deepwiki-open.git
+git clone git@github.com:grassfieldk/deepwiki-open.git
 cd deepwiki-open
 
 # API キーを含む .env ファイルを作成
@@ -139,7 +139,7 @@ VS Code で Dev Containers を使用して DeepWiki を開発する場合：
 
 1. **リポジトリをクローン**:
    ```bash
-   git clone https://github.com/AsyncFuncAI/deepwiki-open.git
+   git clone git@github.com:grassfieldk/deepwiki-open.git
    cd deepwiki-open
    ```
 
@@ -581,7 +581,7 @@ If you want to build the Docker image locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/AsyncFuncAI/deepwiki-open.git
+git clone git@github.com:grassfieldk/deepwiki-open.git
 cd deepwiki-open
 
 # Build the Docker image
