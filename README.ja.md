@@ -9,11 +9,6 @@
 3. すべての仕組みを説明する視覚的な図を作成
 4. すべてを簡単に閲覧できる Wiki に整理
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/sheing)
-[![Tip in Crypto](https://tip.md/badge.svg)](https://tip.md/sng-asyncfunc)
-[![Twitter/X](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/sashimikun_void)
-[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/VQMBGR8u5v)
-
 [English](./README.md) | [日本語](./README.ja.md)
 
 ## ✨ 特徴
@@ -522,20 +517,23 @@ Docker を使用して DeepWiki を実行できます：
 ```bash
 # Pull the image from GitHub Container Registry
 docker pull ghcr.io/asyncfuncai/deepwiki-open:latest
+```
 
 # Run the container with environment variables
-docker run -p 8001:8001 -p 3000:3000 \
-  -e GOOGLE_API_KEY=your_google_api_key \
-  -e OPENAI_API_KEY=your_openai_api_key \
-  -e OPENROUTER_API_KEY=your_openrouter_api_key \
-  -e OLLAMA_HOST=your_ollama_host \
-  -e AZURE_OPENAI_API_KEY=your_azure_openai_api_key \
-  -e AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint \
-  -e AZURE_OPENAI_VERSION=your_azure_openai_version \
 
-  -v ~/.adalflow:/root/.adalflow \
-  ghcr.io/asyncfuncai/deepwiki-open:latest
-```
+docker run -p 8001:8001 -p 3000:3000 \
+ -e GOOGLE_API_KEY=your_google_api_key \
+ -e OPENAI_API_KEY=your_openai_api_key \
+ -e OPENROUTER_API_KEY=your_openrouter_api_key \
+ -e OLLAMA_HOST=your_ollama_host \
+ -e AZURE_OPENAI_API_KEY=your_azure_openai_api_key \
+ -e AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint \
+ -e AZURE_OPENAI_VERSION=your_azure_openai_version \
+
+-v ~/.adalflow:/root/.adalflow \
+ ghcr.io/asyncfuncai/deepwiki-open:latest
+
+````
 
 このコマンドは、ホスト上の ⁠~/.adalflow をコンテナ内の ⁠/root/.adalflow にマウントします。このパスは以下のものを保存するために使用されます：
 
@@ -550,7 +548,7 @@ Or use the provided `docker-compose.yml` file:
 ```bash
 # Edit the .env file with your API keys first
 docker-compose up
-```
+````
 
 (The `docker-compose.yml` file is pre-configured to mount `~/.adalflow` for data persistence, similar to the `docker run` command above.)
 
@@ -729,4 +727,4 @@ _DeepWiki の動作を見る！_
 
 ## ⭐ スター履歴
 
-[![スター履歴チャート](https://api.star-history.com/svg?repos=AsyncFuncAI/deepwiki-open&type=Date)](https://star-history.com/#AsyncFuncAI/deepwiki-open&Date)
+[![スター履歴チャート](https://api.star-history.com/svg?repos=grassfieldk/deepwiki-open&type=Date)](https://star-history.com/#grassfieldk/deepwiki-open&Date)

@@ -1,14 +1,15 @@
-import os
+import asyncio
+import json
 import logging
+import os
+from datetime import datetime
+from typing import Any, Dict, List, Literal, Optional
+
+import google.generativeai as genai
 from fastapi import FastAPI, HTTPException, Query, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
-from typing import List, Optional, Dict, Any, Literal
-import json
-from datetime import datetime
 from pydantic import BaseModel, Field
-import google.generativeai as genai
-import asyncio
 
 # Configure logging
 from api.logging_config import setup_logging
@@ -144,7 +145,8 @@ class ModelConfig(BaseModel):
 class AuthorizationConfig(BaseModel):
     code: str = Field(..., description="Authorization code")
 
-from api.config import configs, WIKI_AUTH_MODE, WIKI_AUTH_CODE
+from api.config import WIKI_AUTH_CODE, WIKI_AUTH_MODE, configs
+
 
 @app.get("/lang/config")
 async def get_lang_config():
@@ -599,8 +601,8 @@ async def get_processed_projects():
                     parts = filename.replace("deepwiki_cache_", "").replace(".json", "").split('_')
 
                     # Expecting repo_type_owner_repo_language
-                    # Example: deepwiki_cache_github_AsyncFuncAI_deepwiki-open_en.json
-                    # parts = [github, AsyncFuncAI, deepwiki-open, en]
+                    # Example: deepwiki_cache_github_grassfieldk_deepwiki-open_en.json
+                    # parts = [github, grassfieldk, deepwiki-open, en]
                     if len(parts) >= 4:
                         repo_type = parts[0]
                         owner = parts[1]

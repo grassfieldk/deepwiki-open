@@ -76,7 +76,7 @@ export default function Home() {
   };
 
   const [repositoryInput, setRepositoryInput] = useState(
-    'https://github.com/AsyncFuncAI/deepwiki-open'
+    'https://github.com/grassfieldk/deepwiki-open'
   );
 
   const REPO_CONFIG_CACHE_KEY = 'deepwikiRepoConfigCache';
@@ -551,13 +551,13 @@ export default function Home() {
                 <p className="text-sm text-[var(--foreground)] mb-3">{t('home.enterRepoUrl')}</p>
                 <div className="grid grid-cols-1 gap-3 text-xs text-[var(--muted)]">
                   <div className="bg-[var(--background)]/70 p-3 rounded border border-[var(--border-color)] font-mono overflow-x-hidden whitespace-nowrap">
-                    https://github.com/AsyncFuncAI/deepwiki-open
+                    https://github.com/grassfieldk/deepwiki-open
                   </div>
                   <div className="bg-[var(--background)]/70 p-3 rounded border border-[var(--border-color)] font-mono overflow-x-hidden whitespace-nowrap">
                     https://gitlab.com/gitlab-org/gitlab
                   </div>
                   <div className="bg-[var(--background)]/70 p-3 rounded border border-[var(--border-color)] font-mono overflow-x-hidden whitespace-nowrap">
-                    AsyncFuncAI/deepwiki-open
+                    grassfieldk/deepwiki-open
                   </div>
                   <div className="bg-[var(--background)]/70 p-3 rounded border border-[var(--border-color)] font-mono overflow-x-hidden whitespace-nowrap">
                     https://bitbucket.org/atlassian/atlaskit

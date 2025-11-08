@@ -1,18 +1,18 @@
 """OpenRouter ModelClient integration."""
 
-from typing import Dict, Sequence, Optional, Any, List
-import logging
 import json
+import logging
+from typing import Any, Dict, List, Optional, Sequence
+
 import aiohttp
 import requests
-from requests.exceptions import RequestException, Timeout
-
 from adalflow.core.model_client import ModelClient
 from adalflow.core.types import (
     CompletionUsage,
-    ModelType,
     GeneratorOutput,
+    ModelType,
 )
+from requests.exceptions import RequestException, Timeout
 
 log = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ class OpenRouterClient(ModelClient):
             headers = {
                 "Authorization": f"Bearer {self.async_client['api_key']}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "https://github.com/AsyncFuncAI/deepwiki-open",  # Optional
+                "HTTP-Referer": "https://github.com/grassfieldk/deepwiki-open",  # Optional
                 "X-Title": "DeepWiki"  # Optional
             }
 
@@ -207,7 +207,9 @@ class OpenRouterClient(ModelClient):
                                                             fixed_xml = fixed_xml.replace('</', '</').replace('  >', '>')
 
                                                             # Try to parse the fixed XML
-                                                            from xml.dom.minidom import parseString
+                                                            from xml.dom.minidom import (
+                                                                parseString,
+                                                            )
                                                             dom = parseString(fixed_xml)
 
                                                             # Get the pretty-printed XML with proper indentation

@@ -9,11 +9,6 @@
 3. Create visual diagrams to explain how everything works
 4. Organize it all into an easy-to-navigate wiki
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/sheing)
-[![Tip in Crypto](https://tip.md/badge.svg)](https://tip.md/sng-asyncfunc)
-[![Twitter/X](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/sashimikun_void)
-[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/VQMBGR8u5v)
-
 [English](./README.md) | [日本語](./README.ja.md)
 
 ## ✨ Features
@@ -519,23 +514,27 @@ You can use Docker to run DeepWiki:
 
 #### Running the Container
 
+````bash
 ```bash
 # Pull the image from GitHub Container Registry
 docker pull ghcr.io/asyncfuncai/deepwiki-open:latest
+````
 
 # Run the container with environment variables
-docker run -p 8001:8001 -p 3000:3000 \
-  -e GOOGLE_API_KEY=your_google_api_key \
-  -e OPENAI_API_KEY=your_openai_api_key \
-  -e OPENROUTER_API_KEY=your_openrouter_api_key \
-  -e OLLAMA_HOST=your_ollama_host \
-  -e AZURE_OPENAI_API_KEY=your_azure_openai_api_key \
-  -e AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint \
-  -e AZURE_OPENAI_VERSION=your_azure_openai_version \
 
-  -v ~/.adalflow:/root/.adalflow \
-  ghcr.io/asyncfuncai/deepwiki-open:latest
-```
+docker run -p 8001:8001 -p 3000:3000 \
+ -e GOOGLE_API_KEY=your_google_api_key \
+ -e OPENAI_API_KEY=your_openai_api_key \
+ -e OPENROUTER_API_KEY=your_openrouter_api_key \
+ -e OLLAMA_HOST=your_ollama_host \
+ -e AZURE_OPENAI_API_KEY=your_azure_openai_api_key \
+ -e AZURE_OPENAI_ENDPOINT=your_azure_openai_endpoint \
+ -e AZURE_OPENAI_VERSION=your_azure_openai_version \
+
+-v ~/.adalflow:/root/.adalflow \
+ ghcr.io/asyncfuncai/deepwiki-open:latest
+
+````
 
 This command also mounts `~/.adalflow` on your host to `/root/.adalflow` in the container. This path is used to store:
 
@@ -550,7 +549,7 @@ Or use the provided `docker-compose.yml` file:
 ```bash
 # Edit the .env file with your API keys first
 docker-compose up
-```
+````
 
 (The `docker-compose.yml` file is pre-configured to mount `~/.adalflow` for data persistence, similar to the `docker run` command above.)
 
@@ -739,4 +738,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=AsyncFuncAI/deepwiki-open&type=Date)](https://star-history.com/#AsyncFuncAI/deepwiki-open&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=grassfieldk/deepwiki-open&type=Date)](https://star-history.com/#grassfieldk/deepwiki-open&Date)
