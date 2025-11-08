@@ -9,11 +9,7 @@ export default function WikiProjectsPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <ProcessedProjects
-        showHeader={true}
-        messages={messages}
-        className=""
-      />
+      <ProcessedProjects showHeader={true} messages={messages} className="" />
     </div>
   );
 }

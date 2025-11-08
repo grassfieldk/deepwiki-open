@@ -19,8 +19,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<string>('en');
   const [messages, setMessages] = useState<Messages>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [supportedLanguages, setSupportedLanguages] = useState({})
-  const [defaultLanguage, setDefaultLanguage] = useState('en')
+  const [supportedLanguages, setSupportedLanguages] = useState({});
+  const [defaultLanguage, setDefaultLanguage] = useState('en');
 
   // Helper function to detect browser language
   const detectBrowserLanguage = (): string => {
@@ -77,24 +77,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         setSupportedLanguages(data.supported_languages);
         setDefaultLanguage(data.default);
       } catch (err) {
-        console.error("Failed to fetch auth status:", err);
+        console.error('Failed to fetch auth status:', err);
         // Assuming auth is required if fetch fails to avoid blocking UI for safety
         const defaultSupportedLanguages = {
-          "en": "English",
-          "ja": "Japanese (日本語)",
-          "zh": "Mandarin Chinese (中文)",
-          "zh-tw": "Traditional Chinese (繁體中文)",
-          "es": "Spanish (Español)",
-          "kr": "Korean (한국어)",
-          "vi": "Vietnamese (Tiếng Việt)",
-          "pt-br": "Brazilian Portuguese (Português Brasileiro)",
-          "fr": "Français (French)",
-          "ru": "Русский (Russian)"
+          en: 'English',
+          ja: 'Japanese (日本語)',
+          zh: 'Mandarin Chinese (中文)',
+          'zh-tw': 'Traditional Chinese (繁體中文)',
+          es: 'Spanish (Español)',
+          kr: 'Korean (한국어)',
+          vi: 'Vietnamese (Tiếng Việt)',
+          'pt-br': 'Brazilian Portuguese (Português Brasileiro)',
+          fr: 'Français (French)',
+          ru: 'Русский (Russian)',
         };
         setSupportedLanguages(defaultSupportedLanguages);
-        setDefaultLanguage("en");
+        setDefaultLanguage('en');
       }
-    }
+    };
     getSupportedLanguages();
   }, []);
 
@@ -106,12 +106,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           let storedLanguage;
           if (typeof window !== 'undefined') {
             storedLanguage = localStorage.getItem('language');
-    
+
             // If no language is stored, detect browser language
             if (!storedLanguage) {
               console.log('No language in localStorage, detecting browser language');
               storedLanguage = detectBrowserLanguage();
-    
+
               // Store the detected language
               localStorage.setItem('language', storedLanguage);
             }
@@ -119,17 +119,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             console.log('Running on server-side, using default language');
             storedLanguage = 'en';
           }
-    
+
           console.log('Supported languages loaded, validating language:', storedLanguage);
-          const validLanguage = Object.keys(supportedLanguages).includes(storedLanguage as any) ? storedLanguage : defaultLanguage;
+          const validLanguage = Object.keys(supportedLanguages).includes(storedLanguage as any)
+            ? storedLanguage
+            : defaultLanguage;
           console.log('Valid language determined:', validLanguage);
-    
+
           // Load messages for the language
           const langMessages = (await import(`../messages/${validLanguage}.json`)).default;
-    
+
           setLanguageState(validLanguage);
           setMessages(langMessages);
-    
+
           // Update HTML lang attribute (only in browser)
           if (typeof document !== 'undefined') {
             document.documentElement.lang = validLanguage;
@@ -144,7 +146,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           setIsLoading(false);
         }
       };
-      
+
       loadLanguage();
     }
   }, [supportedLanguages, defaultLanguage]);
@@ -153,7 +155,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLanguage = async (lang: string) => {
     try {
       console.log('Setting language to:', lang);
-      const validLanguage = Object.keys(supportedLanguages).includes(lang as any) ? lang : defaultLanguage;
+      const validLanguage = Object.keys(supportedLanguages).includes(lang as any)
+        ? lang
+        : defaultLanguage;
 
       // Load messages for the new language
       const langMessages = (await import(`../messages/${validLanguage}.json`)).default;

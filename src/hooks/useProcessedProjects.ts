@@ -30,8 +30,8 @@ export function useProcessedProjects() {
         }
         setProjects(data as ProcessedProject[]);
       } catch (e: unknown) {
-        console.error("Failed to load projects from API:", e);
-        const message = e instanceof Error ? e.message : "An unknown error occurred.";
+        console.error('Failed to load projects from API:', e);
+        const message = e instanceof Error ? e.message : 'An unknown error occurred.';
         setError(message);
         setProjects([]);
       } finally {

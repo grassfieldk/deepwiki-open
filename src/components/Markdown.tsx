@@ -14,24 +14,41 @@ const Markdown: React.FC<MarkdownProps> = ({ content }) => {
   // Define markdown components
   const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
     p({ children, ...props }: { children?: React.ReactNode }) {
-      return <p className="mb-3 text-sm leading-relaxed dark:text-white" {...props}>{children}</p>;
+      return (
+        <p className="mb-3 text-sm leading-relaxed dark:text-white" {...props}>
+          {children}
+        </p>
+      );
     },
     h1({ children, ...props }: { children?: React.ReactNode }) {
-      return <h1 className="text-xl font-bold mt-6 mb-3 dark:text-white" {...props}>{children}</h1>;
+      return (
+        <h1 className="text-xl font-bold mt-6 mb-3 dark:text-white" {...props}>
+          {children}
+        </h1>
+      );
     },
     h2({ children, ...props }: { children?: React.ReactNode }) {
       // Special styling for ReAct headings
       if (children && typeof children === 'string') {
         const text = children.toString();
-        if (text.includes('Thought') || text.includes('Action') || text.includes('Observation') || text.includes('Answer')) {
+        if (
+          text.includes('Thought') ||
+          text.includes('Action') ||
+          text.includes('Observation') ||
+          text.includes('Answer')
+        ) {
           return (
             <h2
               className={`text-base font-bold mt-5 mb-3 p-2 rounded ${
-                text.includes('Thought') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300' :
-                text.includes('Action') ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' :
-                text.includes('Observation') ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300' :
-                text.includes('Answer') ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' :
-                'dark:text-white'
+                text.includes('Thought')
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
+                  : text.includes('Action')
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                    : text.includes('Observation')
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300'
+                      : text.includes('Answer')
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300'
+                        : 'dark:text-white'
               }`}
               {...props}
             >
@@ -40,22 +57,46 @@ const Markdown: React.FC<MarkdownProps> = ({ content }) => {
           );
         }
       }
-      return <h2 className="text-lg font-bold mt-5 mb-3 dark:text-white" {...props}>{children}</h2>;
+      return (
+        <h2 className="text-lg font-bold mt-5 mb-3 dark:text-white" {...props}>
+          {children}
+        </h2>
+      );
     },
     h3({ children, ...props }: { children?: React.ReactNode }) {
-      return <h3 className="text-base font-semibold mt-4 mb-2 dark:text-white" {...props}>{children}</h3>;
+      return (
+        <h3 className="text-base font-semibold mt-4 mb-2 dark:text-white" {...props}>
+          {children}
+        </h3>
+      );
     },
     h4({ children, ...props }: { children?: React.ReactNode }) {
-      return <h4 className="text-sm font-semibold mt-3 mb-2 dark:text-white" {...props}>{children}</h4>;
+      return (
+        <h4 className="text-sm font-semibold mt-3 mb-2 dark:text-white" {...props}>
+          {children}
+        </h4>
+      );
     },
     ul({ children, ...props }: { children?: React.ReactNode }) {
-      return <ul className="list-disc pl-6 mb-4 text-sm dark:text-white space-y-2" {...props}>{children}</ul>;
+      return (
+        <ul className="list-disc pl-6 mb-4 text-sm dark:text-white space-y-2" {...props}>
+          {children}
+        </ul>
+      );
     },
     ol({ children, ...props }: { children?: React.ReactNode }) {
-      return <ol className="list-decimal pl-6 mb-4 text-sm dark:text-white space-y-2" {...props}>{children}</ol>;
+      return (
+        <ol className="list-decimal pl-6 mb-4 text-sm dark:text-white space-y-2" {...props}>
+          {children}
+        </ol>
+      );
     },
     li({ children, ...props }: { children?: React.ReactNode }) {
-      return <li className="mb-2 text-sm leading-relaxed dark:text-white" {...props}>{children}</li>;
+      return (
+        <li className="mb-2 text-sm leading-relaxed dark:text-white" {...props}>
+          {children}
+        </li>
+      );
     },
     a({ children, href, ...props }: { children?: React.ReactNode; href?: string }) {
       return (
@@ -90,26 +131,39 @@ const Markdown: React.FC<MarkdownProps> = ({ content }) => {
       );
     },
     thead({ children, ...props }: { children?: React.ReactNode }) {
-      return <thead className="bg-gray-100 dark:bg-gray-800" {...props}>{children}</thead>;
+      return (
+        <thead className="bg-gray-100 dark:bg-gray-800" {...props}>
+          {children}
+        </thead>
+      );
     },
     tbody({ children, ...props }: { children?: React.ReactNode }) {
-      return <tbody className="divide-y divide-gray-200 dark:divide-gray-700" {...props}>{children}</tbody>;
+      return (
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-700" {...props}>
+          {children}
+        </tbody>
+      );
     },
     tr({ children, ...props }: { children?: React.ReactNode }) {
-      return <tr className="hover:bg-gray-50 dark:hover:bg-gray-900" {...props}>{children}</tr>;
+      return (
+        <tr className="hover:bg-gray-50 dark:hover:bg-gray-900" {...props}>
+          {children}
+        </tr>
+      );
     },
     th({ children, ...props }: { children?: React.ReactNode }) {
       return (
-        <th
-          className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300"
-          {...props}
-        >
+        <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300" {...props}>
           {children}
         </th>
       );
     },
     td({ children, ...props }: { children?: React.ReactNode }) {
-      return <td className="px-4 py-3 border-t border-gray-200 dark:border-gray-700" {...props}>{children}</td>;
+      return (
+        <td className="px-4 py-3 border-t border-gray-200 dark:border-gray-700" {...props}>
+          {children}
+        </td>
+      );
     },
     code(props: {
       inline?: boolean;
@@ -126,11 +180,7 @@ const Markdown: React.FC<MarkdownProps> = ({ content }) => {
       if (!inline && match && match[1] === 'mermaid') {
         return (
           <div className="my-8 bg-gray-50 dark:bg-gray-800 rounded-md overflow-hidden shadow-sm">
-            <Mermaid
-              chart={codeContent}
-              className="w-full max-w-full"
-              zoomingEnabled={true}
-            />
+            <Mermaid chart={codeContent} className="w-full max-w-full" zoomingEnabled={true} />
           </div>
         );
       }
@@ -168,7 +218,11 @@ const Markdown: React.FC<MarkdownProps> = ({ content }) => {
               language={match[1]}
               style={tomorrow}
               className="!text-sm"
-              customStyle={{ margin: 0, borderRadius: '0 0 0.375rem 0.375rem', padding: '1rem' }}
+              customStyle={{
+                margin: 0,
+                borderRadius: '0 0 0.375rem 0.375rem',
+                padding: '1rem',
+              }}
               showLineNumbers={true}
               wrapLines={true}
               wrapLongLines={true}

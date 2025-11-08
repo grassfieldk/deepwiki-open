@@ -22,11 +22,11 @@ interface ProcessedProjectsProps {
   messages?: Record<string, Record<string, string>>; // Translation messages with proper typing
 }
 
-export default function ProcessedProjects({ 
-  showHeader = true, 
-  maxItems, 
-  className = "",
-  messages 
+export default function ProcessedProjects({
+  showHeader = true,
+  maxItems,
+  className = '',
+  messages,
 }: ProcessedProjectsProps) {
   const [projects, setProjects] = useState<ProcessedProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,12 +38,13 @@ export default function ProcessedProjects({
   const defaultMessages = {
     title: 'Processed Wiki Projects',
     searchPlaceholder: 'Search projects by name, owner, or repository...',
-    noProjects: 'No projects found in the server cache. The cache might be empty or the server encountered an issue.',
+    noProjects:
+      'No projects found in the server cache. The cache might be empty or the server encountered an issue.',
     noSearchResults: 'No projects match your search criteria.',
     processedOn: 'Processed on:',
     loadingProjects: 'Loading projects...',
     errorLoading: 'Error loading projects:',
-    backToHome: 'Back to Home'
+    backToHome: 'Back to Home',
   };
 
   const t = (key: string) => {
@@ -68,8 +69,8 @@ export default function ProcessedProjects({
         }
         setProjects(data as ProcessedProject[]);
       } catch (e: unknown) {
-        console.error("Failed to load projects from API:", e);
-        const message = e instanceof Error ? e.message : "An unknown error occurred.";
+        console.error('Failed to load projects from API:', e);
+        const message = e instanceof Error ? e.message : 'An unknown error occurred.';
         setError(message);
         setProjects([]);
       } finally {
@@ -87,11 +88,12 @@ export default function ProcessedProjects({
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = projects.filter(project => 
-      project.name.toLowerCase().includes(query) ||
-      project.owner.toLowerCase().includes(query) ||
-      project.repo.toLowerCase().includes(query) ||
-      project.repo_type.toLowerCase().includes(query)
+    const filtered = projects.filter(
+      (project) =>
+        project.name.toLowerCase().includes(query) ||
+        project.owner.toLowerCase().includes(query) ||
+        project.repo.toLowerCase().includes(query) ||
+        project.repo_type.toLowerCase().includes(query)
     );
 
     return maxItems ? filtered.slice(0, maxItems) : filtered;
@@ -120,7 +122,7 @@ export default function ProcessedProjects({
         const errorBody = await response.json().catch(() => ({ error: response.statusText }));
         throw new Error(errorBody.error || response.statusText);
       }
-      setProjects(prev => prev.filter(p => p.id !== project.id));
+      setProjects((prev) => prev.filter((p) => p.id !== project.id));
     } catch (e: unknown) {
       console.error('Failed to delete project:', e);
       alert(`Failed to delete project: ${e instanceof Error ? e.message : 'Unknown error'}`);
@@ -189,13 +191,26 @@ export default function ProcessedProjects({
       </div>
 
       {isLoading && <p className="text-[var(--muted)]">{t('loadingProjects')}</p>}
-      {error && <p className="text-[var(--highlight)]">{t('errorLoading')} {error}</p>}
+      {error && (
+        <p className="text-[var(--highlight)]">
+          {t('errorLoading')} {error}
+        </p>
+      )}
 
       {!isLoading && !error && filteredProjects.length > 0 && (
-        <div className={viewMode === 'card' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-2'}>
-            {filteredProjects.map((project) => (
+        <div
+          className={
+            viewMode === 'card'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'
+              : 'space-y-2'
+          }
+        >
+          {filteredProjects.map((project) =>
             viewMode === 'card' ? (
-              <div key={project.id} className="relative p-4 border border-[var(--border-color)] rounded-lg bg-[var(--card-bg)] shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
+              <div
+                key={project.id}
+                className="relative p-4 border border-[var(--border-color)] rounded-lg bg-[var(--card-bg)] shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+              >
                 <button
                   type="button"
                   onClick={() => handleDelete(project)}
@@ -225,7 +240,10 @@ export default function ProcessedProjects({
                 </Link>
               </div>
             ) : (
-              <div key={project.id} className="relative p-3 border border-[var(--border-color)] rounded-lg bg-[var(--card-bg)] hover:bg-[var(--background)] transition-colors">
+              <div
+                key={project.id}
+                className="relative p-3 border border-[var(--border-color)] rounded-lg bg-[var(--card-bg)] hover:bg-[var(--background)] transition-colors"
+              >
                 <button
                   type="button"
                   onClick={() => handleDelete(project)}
@@ -243,7 +261,8 @@ export default function ProcessedProjects({
                       {project.name}
                     </h3>
                     <p className="text-xs text-[var(--muted)] mt-1">
-                      {t('processedOn')} {new Date(project.submittedAt).toLocaleDateString()} • {project.repo_type} • {project.language}
+                      {t('processedOn')} {new Date(project.submittedAt).toLocaleDateString()} •{' '}
+                      {project.repo_type} • {project.language}
                     </p>
                   </div>
                   <div className="flex gap-2 ml-4">
@@ -254,13 +273,15 @@ export default function ProcessedProjects({
                 </Link>
               </div>
             )
-          ))}
+          )}
         </div>
       )}
 
-      {!isLoading && !error && projects.length > 0 && filteredProjects.length === 0 && searchQuery && (
-        <p className="text-[var(--muted)]">{t('noSearchResults')}</p>
-      )}
+      {!isLoading &&
+        !error &&
+        projects.length > 0 &&
+        filteredProjects.length === 0 &&
+        searchQuery && <p className="text-[var(--muted)]">{t('noSearchResults')}</p>}
 
       {!isLoading && !error && projects.length === 0 && (
         <p className="text-[var(--muted)]">{t('noProjects')}</p>

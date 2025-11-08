@@ -20,7 +20,7 @@ const addTokensToRequestBody = (
   model: string = '',
   isCustomModel: boolean = false,
   customModel: string = '',
-  language: string = 'en',
+  language: string = 'en'
 ) => {
   if (token !== '') {
     requestBody.token = token;
@@ -48,8 +48,12 @@ export default function WorkshopPage() {
   // Extract tokens from search params
   const token = searchParams.get('token') || '';
   const repoType = searchParams.get('type') || 'github';
-  const localPath = searchParams.get('local_path') ? decodeURIComponent(searchParams.get('local_path') || '') : undefined;
-  const repoUrl = searchParams.get('repo_url') ? decodeURIComponent(searchParams.get('repo_url') || '') : undefined;
+  const localPath = searchParams.get('local_path')
+    ? decodeURIComponent(searchParams.get('local_path') || '')
+    : undefined;
+  const repoUrl = searchParams.get('repo_url')
+    ? decodeURIComponent(searchParams.get('repo_url') || '')
+    : undefined;
   const providerParam = searchParams.get('provider') || '';
   const modelParam = searchParams.get('model') || '';
   const isCustomModelParam = searchParams.get('is_custom_model') === 'true';
@@ -60,14 +64,17 @@ export default function WorkshopPage() {
   const { messages } = useLanguage();
 
   // Initialize repo info with useMemo to prevent unnecessary re-renders
-  const repoInfo = useMemo<RepoInfo>(() => ({
-    owner,
-    repo,
-    type: repoType,
-    token: token || null,
-    localPath: localPath || null,
-    repoUrl: repoUrl || null
-  }), [owner, repo, repoType, token, localPath, repoUrl]);
+  const repoInfo = useMemo<RepoInfo>(
+    () => ({
+      owner,
+      repo,
+      type: repoType,
+      token: token || null,
+      localPath: localPath || null,
+      repoUrl: repoUrl || null,
+    }),
+    [owner, repo, repoType, token, localPath, repoUrl]
+  );
 
   // State variables
   const [isLoading, setIsLoading] = useState(false);
@@ -122,8 +129,12 @@ export default function WorkshopPage() {
 
       if (response.ok) {
         const cachedData = await response.json();
-        if (cachedData && cachedData.wiki_structure && cachedData.generated_pages &&
-            Object.keys(cachedData.generated_pages).length > 0) {
+        if (
+          cachedData &&
+          cachedData.wiki_structure &&
+          cachedData.generated_pages &&
+          Object.keys(cachedData.generated_pages).length > 0
+        ) {
           console.log('Successfully fetched cached wiki data for workshop generation');
           setCachedWikiContent(cachedData);
           return cachedData;
@@ -177,7 +188,7 @@ export default function WorkshopPage() {
         const maxContentLength = 30000; // Approximate limit to avoid token issues
 
         // First add high importance pages
-        const highImportancePages = pages.filter(page => page.importance === 'high');
+        const highImportancePages = pages.filter((page) => page.importance === 'high');
         for (const page of highImportancePages) {
           if (generatedPages[page.id] && generatedPages[page.id].content) {
             const content = `## ${page.title}\n${generatedPages[page.id].content}\n\n`;
@@ -200,7 +211,8 @@ export default function WorkshopPage() {
               // Check if adding this content would exceed our limit
               if (totalContentLength + content.length > maxContentLength) {
                 // If it would exceed, just add a summary
-                const summaryMatch = generatedPages[page.id].content.match(/# .*?\n\n(.*?)(\n\n|$)/);
+                const summaryMatch =
+                  generatedPages[page.id].content.match(/# .*?\n\n(.*?)(\n\n|$)/);
                 const summary = summaryMatch ? summaryMatch[1].trim() : 'No summary available';
                 const summaryContent = `## ${page.title}\n${summary}\n\n`;
 
@@ -222,9 +234,10 @@ export default function WorkshopPage() {
       const requestBody: Record<string, unknown> = {
         repo_url: repoUrl,
         type: repoInfo.type,
-        messages: [{
-          role: 'user',
-          content: `Create a comprehensive workshop for learning how to use and contribute to the ${owner}/${repo} repository.
+        messages: [
+          {
+            role: 'user',
+            content: `Create a comprehensive workshop for learning how to use and contribute to the ${owner}/${repo} repository.
 
 I'll provide you with information from the project's wiki to help you create a more accurate and relevant workshop.
 
@@ -295,22 +308,44 @@ IMPORTANT CONTENT GUIDELINES:
 8. Include diagrams to visualize complex concepts
 9. Make sure the workshop is engaging and interactive
 
-Make the workshop content in ${language === 'en' ? 'English' :
-  language === 'ja' ? 'Japanese (日本語)' :
-  language === 'zh' ? 'Mandarin Chinese (中文)' :
-  language === 'zh-tw' ? 'Traditional Chinese (繁體中文)' :
-  language === 'es' ? 'Spanish (Español)' :
-  language === 'kr' ? 'Korean (한국어)' :
-  language === 'vi' ? 'Vietnamese (Tiếng Việt)' : 
-  language === "pt-br" ? "Brazilian Portuguese (Português Brasileiro)" :
-  language === "fr" ? "Français (French)" :
-  language === "ru" ? "Русский (Russian)" :
-  'English'} language.`
-        }]
+Make the workshop content in ${
+              language === 'en'
+                ? 'English'
+                : language === 'ja'
+                  ? 'Japanese (日本語)'
+                  : language === 'zh'
+                    ? 'Mandarin Chinese (中文)'
+                    : language === 'zh-tw'
+                      ? 'Traditional Chinese (繁體中文)'
+                      : language === 'es'
+                        ? 'Spanish (Español)'
+                        : language === 'kr'
+                          ? 'Korean (한국어)'
+                          : language === 'vi'
+                            ? 'Vietnamese (Tiếng Việt)'
+                            : language === 'pt-br'
+                              ? 'Brazilian Portuguese (Português Brasileiro)'
+                              : language === 'fr'
+                                ? 'Français (French)'
+                                : language === 'ru'
+                                  ? 'Русский (Russian)'
+                                  : 'English'
+            } language.`,
+          },
+        ],
       };
 
       // Add tokens if available
-      addTokensToRequestBody(requestBody, token, repoInfo.type, providerParam, modelParam, isCustomModelParam, customModelParam, language);
+      addTokensToRequestBody(
+        requestBody,
+        token,
+        repoInfo.type,
+        providerParam,
+        modelParam,
+        isCustomModelParam,
+        customModelParam,
+        language
+      );
 
       // Use WebSocket for communication
       let content = '';
@@ -318,7 +353,9 @@ Make the workshop content in ${language === 'en' ? 'English' :
       try {
         // Create WebSocket URL from the server base URL
         const serverBaseUrl = process.env.SERVER_BASE_URL || 'http://localhost:8001';
-        const wsBaseUrl = serverBaseUrl.replace(/^http/, 'ws')? serverBaseUrl.replace(/^https/, 'wss'): serverBaseUrl.replace(/^http/, 'ws');
+        const wsBaseUrl = serverBaseUrl.replace(/^http/, 'ws')
+          ? serverBaseUrl.replace(/^https/, 'wss')
+          : serverBaseUrl.replace(/^http/, 'ws');
         const wsUrl = `${wsBaseUrl}/ws/chat`;
 
         // Create a new WebSocket connection
@@ -390,7 +427,7 @@ Make the workshop content in ${language === 'en' ? 'English' :
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -440,7 +477,7 @@ Make the workshop content in ${language === 'en' ? 'English' :
         const headings = content.match(/^## (.*)$/gm) || [];
         if (headings.length > 0) {
           let toc = '## Table of Contents\n\n';
-          headings.forEach(heading => {
+          headings.forEach((heading) => {
             const headingText = heading.replace('## ', '');
             // Create a link-friendly version of the heading
             const headingLink = headingText
@@ -473,8 +510,10 @@ Make the workshop content in ${language === 'en' ? 'English' :
 
           // Estimate time to complete based on exercise number (earlier exercises are usually simpler)
           let estimatedTime = 10; // default 10 minutes
-          if (i === 0) estimatedTime = 5; // first exercise is usually simpler
-          else if (i === totalExercises - 1) estimatedTime = 15; // last exercise is usually more complex
+          if (i === 0)
+            estimatedTime = 5; // first exercise is usually simpler
+          else if (i === totalExercises - 1)
+            estimatedTime = 15; // last exercise is usually more complex
           else if (i > Math.floor(totalExercises / 2)) estimatedTime = 12; // later exercises are more complex
 
           const progressIndicator = `<div style="text-align: right; font-size: 0.85em; color: #666;">
@@ -488,7 +527,10 @@ Exercise ${i + 1} of ${totalExercises} | Estimated time: ${estimatedTime} minute
             const lineEndPos = content.indexOf('\n', headingPos);
             if (lineEndPos !== -1) {
               // Insert the progress indicator after the heading
-              content = content.slice(0, lineEndPos + 1) + progressIndicator + content.slice(lineEndPos + 1);
+              content =
+                content.slice(0, lineEndPos + 1) +
+                progressIndicator +
+                content.slice(lineEndPos + 1);
             }
           }
         }
@@ -504,13 +546,13 @@ Exercise ${i + 1} of ${totalExercises} | Estimated time: ${estimatedTime} minute
             const finalProjectNote = `<div style="text-align: right; font-size: 0.85em; color: #666;">
 Estimated time: 20-30 minutes | Combines concepts from all exercises
 </div>\n\n`;
-            content = content.slice(0, lineEndPos + 1) + finalProjectNote + content.slice(lineEndPos + 1);
+            content =
+              content.slice(0, lineEndPos + 1) + finalProjectNote + content.slice(lineEndPos + 1);
           }
         }
       }
 
       setWorkshopContent(content);
-
     } catch (err) {
       console.error('Error generating workshop content:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -518,7 +560,21 @@ Estimated time: 20-30 minutes | Combines concepts from all exercises
       setIsLoading(false);
       setLoadingMessage(undefined);
     }
-  }, [owner, repo, repoInfo, token, providerParam, modelParam, isCustomModelParam, customModelParam, language, isLoading, messages.loading, cachedWikiContent, fetchCachedWikiContent]);
+  }, [
+    owner,
+    repo,
+    repoInfo,
+    token,
+    providerParam,
+    modelParam,
+    isCustomModelParam,
+    customModelParam,
+    language,
+    isLoading,
+    messages.loading,
+    cachedWikiContent,
+    fetchCachedWikiContent,
+  ]);
 
   // Export workshop content
   const exportWorkshop = useCallback(async () => {
@@ -541,7 +597,6 @@ Estimated time: 20-30 minutes | Combines concepts from all exercises
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-
     } catch (err) {
       console.error('Error exporting workshop:', err);
       setExportError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -614,7 +669,9 @@ Estimated time: 20-30 minutes | Combines concepts from all exercises
           </div>
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4 mb-6">
-            <h3 className="text-red-800 dark:text-red-400 font-medium mb-2">{messages.common?.error || 'Error'}</h3>
+            <h3 className="text-red-800 dark:text-red-400 font-medium mb-2">
+              {messages.common?.error || 'Error'}
+            </h3>
             <p className="text-red-700 dark:text-red-300">{error}</p>
           </div>
         ) : (

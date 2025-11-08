@@ -9,6 +9,6 @@ export default getRequestConfig(async ({ locale }) => {
 
   return {
     locale: safeLocale as string,
-    messages: (await import(`./messages/${safeLocale}.json`)).default
+    messages: (await import(`./messages/${safeLocale}.json`)).default,
   };
 });

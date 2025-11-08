@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Define dark mode variant */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -32,7 +32,7 @@ html[data-theme='dark'] {
 }
 
 /* Fix for unreadable <select> options in Chrome's dark mode */
-[data-theme="dark"] select option {
+[data-theme='dark'] select option {
   background: var(--background);
 }
 

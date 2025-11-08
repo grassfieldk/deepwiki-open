@@ -94,7 +94,7 @@ export default function ConfigurationModal({
   authRequired,
   authCode,
   setAuthCode,
-  isAuthLoading
+  isAuthLoading,
 }: ConfigurationModalProps) {
   const { messages: t } = useLanguage();
 
@@ -110,7 +110,9 @@ export default function ConfigurationModal({
           {/* Modal header with close button */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-color)]">
             <h3 className="text-lg font-medium text-[var(--accent-primary)]">
-              <span className="text-[var(--accent-primary)]">{t.form?.configureWiki || 'Configure Wiki'}</span>
+              <span className="text-[var(--accent-primary)]">
+                {t.form?.configureWiki || 'Configure Wiki'}
+              </span>
             </h3>
             <button
               type="button"
@@ -118,7 +120,12 @@ export default function ConfigurationModal({
               className="text-[var(--muted)] hover:text-[var(--foreground)] focus:outline-none transition-colors"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -137,7 +144,10 @@ export default function ConfigurationModal({
 
             {/* Language selection */}
             <div className="mb-4">
-              <label htmlFor="language-select" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label
+                htmlFor="language-select"
+                className="block text-sm font-medium text-[var(--foreground)] mb-2"
+              >
                 {t.form?.wikiLanguage || 'Wiki Language'}
               </label>
               <select
@@ -146,9 +156,11 @@ export default function ConfigurationModal({
                 onChange={(e) => setSelectedLanguage(e.target.value)}
                 className="input-japanese block w-full px-3 py-2 text-sm rounded-md bg-transparent text-[var(--foreground)] focus:outline-none focus:border-[var(--accent-primary)]"
               >
-                {
-                  Object.entries(supportedLanguages).map(([key, value])=> <option key={key} value={key}>{value}</option>)
-                }
+                {Object.entries(supportedLanguages).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -169,9 +181,12 @@ export default function ConfigurationModal({
                 >
                   <div className="flex items-center">
                     <div className="text-left">
-                      <div className="font-medium text-sm">{t.form?.comprehensive || 'Comprehensive'}</div>
+                      <div className="font-medium text-sm">
+                        {t.form?.comprehensive || 'Comprehensive'}
+                      </div>
                       <div className="text-xs opacity-80">
-                        {t.form?.comprehensiveDescription || 'Detailed wiki with structured sections'}
+                        {t.form?.comprehensiveDescription ||
+                          'Detailed wiki with structured sections'}
                       </div>
                     </div>
                   </div>
@@ -250,7 +265,10 @@ export default function ConfigurationModal({
             )}
             {!isAuthLoading && authRequired && (
               <div className="mb-4 p-4 bg-[var(--background)]/50 rounded-md border border-[var(--border-color)]">
-                <label htmlFor="authCode" className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label
+                  htmlFor="authCode"
+                  className="block text-sm font-medium text-[var(--foreground)] mb-2"
+                >
                   {t.form?.authorizationCode || 'Authorization Code'}
                 </label>
                 <input
@@ -261,13 +279,23 @@ export default function ConfigurationModal({
                   className="input-japanese block w-full px-3 py-2 text-sm rounded-md bg-transparent text-[var(--foreground)] focus:outline-none focus:border-[var(--accent-primary)]"
                   placeholder="Enter your authorization code"
                 />
-                 <div className="flex items-center mt-2 text-xs text-[var(--muted)]">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[var(--muted)]"
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="flex items-center mt-2 text-xs text-[var(--muted)]">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-1 text-[var(--muted)]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
-                   {t.form?.authorizationRequired || 'Authentication is required to generate the wiki.'}
+                  {t.form?.authorizationRequired ||
+                    'Authentication is required to generate the wiki.'}
                 </div>
               </div>
             )}
@@ -288,7 +316,9 @@ export default function ConfigurationModal({
               disabled={isSubmitting}
               className="px-4 py-2 text-sm font-medium rounded-md border border-transparent bg-[var(--accent-primary)]/90 text-white hover:bg-[var(--accent-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? (t.common?.processing || 'Processing...') : (t.common?.generateWiki || 'Generate Wiki')}
+              {isSubmitting
+                ? t.common?.processing || 'Processing...'
+                : t.common?.generateWiki || 'Generate Wiki'}
             </button>
           </div>
         </div>

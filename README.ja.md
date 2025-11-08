@@ -57,6 +57,7 @@ docker-compose up
 OllamaとDockerの詳細な使用方法については、[Ollama Instructions](Ollama-instruction.md)を参照してください。
 
 > 💡 **これらのキーの入手先:**
+>
 > - Google API キーは[Google AI Studio](https://makersuite.google.com/app/apikey)から取得
 > - OpenAI API キーは[OpenAI Platform](https://platform.openai.com/api-keys)から取得
 > - Azure OpenAI 認証情報は[Azure Portal](https://portal.azure.com/)から取得 - Azure OpenAI リソースを作成し、APIキー、エンドポイント、APIバージョンを取得
@@ -138,12 +139,14 @@ VS Code で Dev Containers を使用して DeepWiki を開発する場合：
 #### セットアップ手順
 
 1. **リポジトリをクローン**:
+
    ```bash
    git clone git@github.com:grassfieldk/deepwiki-open.git
    cd deepwiki-open
    ```
 
 2. **API キーを含む .env ファイルを作成**:
+
    ```bash
    echo "GOOGLE_API_KEY=your_google_api_key" > .env
    echo "OPENAI_API_KEY=your_openai_api_key" >> .env
@@ -401,11 +404,11 @@ docker-compose up
 
 ### 利用可能なEmbedderタイプ
 
-| タイプ | 説明 | 必要なAPIキー | 備考 |
-|------|-------------|------------------|-------|
+| タイプ   | 説明                            | 必要なAPIキー    | 備考                                  |
+| -------- | ------------------------------- | ---------------- | ------------------------------------- |
 | `openai` | OpenAI embeddings（デフォルト） | `OPENAI_API_KEY` | `text-embedding-3-small` モデルを使用 |
-| `google` | Google AI embeddings | `GOOGLE_API_KEY` | `text-embedding-004` モデルを使用 |
-| `ollama` | ローカルOllama embeddings | なし | ローカルOllamaインストールが必要 |
+| `google` | Google AI embeddings            | `GOOGLE_API_KEY` | `text-embedding-004` モデルを使用     |
+| `ollama` | ローカルOllama embeddings       | なし             | ローカルOllamaインストールが必要      |
 
 ### Google AI Embeddingsを使用する理由
 
@@ -435,18 +438,21 @@ export DEEPWIKI_EMBEDDER_TYPE=ollama
 
 DeepWikiは診断出力のためにPythonの組み込みloggingモジュールを使用しています。環境変数を使用してverbosityとログファイルの宛先を設定できます：
 
-| 変数        | 説明                                                        | デフォルト                      |
-|-----------------|------------------------------------------------------------|------------------------------|
-| `LOG_LEVEL`     | Logging レベル（DEBUG, INFO, WARNING, ERROR, CRITICAL）     | INFO                         |
-| `LOG_FILE_PATH` | ログファイルのパス。設定すると、このファイルにログが書き込まれます | `api/logs/application.log`   |
+| 変数            | 説明                                                               | デフォルト                 |
+| --------------- | ------------------------------------------------------------------ | -------------------------- |
+| `LOG_LEVEL`     | Logging レベル（DEBUG, INFO, WARNING, ERROR, CRITICAL）            | INFO                       |
+| `LOG_FILE_PATH` | ログファイルのパス。設定すると、このファイルにログが書き込まれます | `api/logs/application.log` |
 
 デバッグ logging を有効にしてカスタムファイルにログを送信するには：
+
 ```bash
 export LOG_LEVEL=DEBUG
 export LOG_FILE_PATH=./debug.log
 python -m api.main
 ```
+
 またはDocker Composeで：
+
 ```bash
 LOG_LEVEL=DEBUG LOG_FILE_PATH=./debug.log docker-compose up
 ```
@@ -459,6 +465,7 @@ Docker Composeで実行する場合、コンテナの`api/logs`ディレクト�
 LOG_LEVEL=DEBUG
 LOG_FILE_PATH=./debug.log
 ```
+
 次に単純に実行：
 
 ```bash
@@ -471,22 +478,23 @@ docker-compose up
 
 ### 環境変数
 
-| 変数             | 説明                                                  | 必須 | 注意                                                                                                     |
-|------------------|-------------------------------------------------------|------|----------------------------------------------------------------------------------------------------------|
-| `GOOGLE_API_KEY`     | Google Gemini API キー（AI 生成と embeddings 用）      | いいえ | Google Gemini モデルと Google AI embeddings に必要
-| `OPENAI_API_KEY`     | OpenAI API キー（embeddings とモデル用）                     | 条件付き | OpenAI embeddings またはモデルを使用する場合に必要                                                            |
-| `OPENROUTER_API_KEY` | OpenRouter API キー（代替モデル用）                    | いいえ | OpenRouter モデルを使用する場合にのみ必要                                                       |
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI API キー                    | いいえ | Azure OpenAI モデルを使用する場合にのみ必要                                                       |
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI エンドポイント                    | いいえ | Azure OpenAI モデルを使用する場合にのみ必要                                                       |
-| `AZURE_OPENAI_VERSION` | Azure OpenAI バージョン                     | いいえ | Azure OpenAI モデルを使用する場合にのみ必要                                                       |
-| `OLLAMA_HOST`        | Ollama ホスト（デフォルト: http://localhost:11434）                | いいえ | 外部 Ollama サーバーを使用する場合にのみ必要                                                  |
-| `DEEPWIKI_EMBEDDER_TYPE` | Embedder タイプ: `openai`, `google`, または `ollama`（デフォルト: `openai`） | いいえ | 使用する embedding プロバイダーを制御                                                              |
-| `PORT`               | API サーバーのポート（デフォルト: 8001）                      | いいえ | API とフロントエンドを同じマシンでホストする場合、`SERVER_BASE_URL` のポートを適宜変更してください |
-| `SERVER_BASE_URL`    | API サーバーのベース URL（デフォルト: http://localhost:8001） | いいえ |
-| `DEEPWIKI_AUTH_MODE` | Wiki 生成に認証コードが必要な承認モードを有効にするには `true` または `1` に設定 | いいえ | デフォルトは `false`。有効にした場合、`DEEPWIKI_AUTH_CODE` が必要です。 |
-| `DEEPWIKI_AUTH_CODE` | `DEEPWIKI_AUTH_MODE` が有効な場合に Wiki 生成に必要な秘密コード | いいえ | `DEEPWIKI_AUTH_MODE` が `true` または `1` の場合にのみ使用されます。 |
+| 変数                     | 説明                                                                             | 必須     | 注意                                                                                               |
+| ------------------------ | -------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| `GOOGLE_API_KEY`         | Google Gemini API キー（AI 生成と embeddings 用）                                | いいえ   | Google Gemini モデルと Google AI embeddings に必要                                                 |
+| `OPENAI_API_KEY`         | OpenAI API キー（embeddings とモデル用）                                         | 条件付き | OpenAI embeddings またはモデルを使用する場合に必要                                                 |
+| `OPENROUTER_API_KEY`     | OpenRouter API キー（代替モデル用）                                              | いいえ   | OpenRouter モデルを使用する場合にのみ必要                                                          |
+| `AZURE_OPENAI_API_KEY`   | Azure OpenAI API キー                                                            | いいえ   | Azure OpenAI モデルを使用する場合にのみ必要                                                        |
+| `AZURE_OPENAI_ENDPOINT`  | Azure OpenAI エンドポイント                                                      | いいえ   | Azure OpenAI モデルを使用する場合にのみ必要                                                        |
+| `AZURE_OPENAI_VERSION`   | Azure OpenAI バージョン                                                          | いいえ   | Azure OpenAI モデルを使用する場合にのみ必要                                                        |
+| `OLLAMA_HOST`            | Ollama ホスト（デフォルト: http://localhost:11434）                              | いいえ   | 外部 Ollama サーバーを使用する場合にのみ必要                                                       |
+| `DEEPWIKI_EMBEDDER_TYPE` | Embedder タイプ: `openai`, `google`, または `ollama`（デフォルト: `openai`）     | いいえ   | 使用する embedding プロバイダーを制御                                                              |
+| `PORT`                   | API サーバーのポート（デフォルト: 8001）                                         | いいえ   | API とフロントエンドを同じマシンでホストする場合、`SERVER_BASE_URL` のポートを適宜変更してください |
+| `SERVER_BASE_URL`        | API サーバーのベース URL（デフォルト: http://localhost:8001）                    | いいえ   |
+| `DEEPWIKI_AUTH_MODE`     | Wiki 生成に認証コードが必要な承認モードを有効にするには `true` または `1` に設定 | いいえ   | デフォルトは `false`。有効にした場合、`DEEPWIKI_AUTH_CODE` が必要です。                            |
+| `DEEPWIKI_AUTH_CODE`     | `DEEPWIKI_AUTH_MODE` が有効な場合に Wiki 生成に必要な秘密コード                  | いいえ   | `DEEPWIKI_AUTH_MODE` が `true` または `1` の場合にのみ使用されます。                               |
 
 **APIキー要件:**
+
 - `DEEPWIKI_EMBEDDER_TYPE=openai`（デフォルト）の場合: `OPENAI_API_KEY` が必要
 - `DEEPWIKI_EMBEDDER_TYPE=google` の場合: `GOOGLE_API_KEY` が必要
 - `DEEPWIKI_EMBEDDER_TYPE=ollama` の場合: APIキーは不要（ローカル処理）

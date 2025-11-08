@@ -23,10 +23,18 @@ function isDeleteProjectCachePayload(obj: unknown): obj is DeleteProjectCachePay
   return (
     obj != null &&
     typeof obj === 'object' &&
-    'owner' in obj && typeof (obj as Record<string, unknown>).owner === 'string' && ((obj as Record<string, unknown>).owner as string).trim() !== '' &&
-    'repo' in obj && typeof (obj as Record<string, unknown>).repo === 'string' && ((obj as Record<string, unknown>).repo as string).trim() !== '' &&
-    'repo_type' in obj && typeof (obj as Record<string, unknown>).repo_type === 'string' && ((obj as Record<string, unknown>).repo_type as string).trim() !== '' &&
-    'language' in obj && typeof (obj as Record<string, unknown>).language === 'string' && ((obj as Record<string, unknown>).language as string).trim() !== ''
+    'owner' in obj &&
+    typeof (obj as Record<string, unknown>).owner === 'string' &&
+    ((obj as Record<string, unknown>).owner as string).trim() !== '' &&
+    'repo' in obj &&
+    typeof (obj as Record<string, unknown>).repo === 'string' &&
+    ((obj as Record<string, unknown>).repo as string).trim() !== '' &&
+    'repo_type' in obj &&
+    typeof (obj as Record<string, unknown>).repo_type === 'string' &&
+    ((obj as Record<string, unknown>).repo_type as string).trim() !== '' &&
+    'language' in obj &&
+    typeof (obj as Record<string, unknown>).language === 'string' &&
+    ((obj as Record<string, unknown>).language as string).trim() !== ''
   );
 }
 
@@ -48,20 +56,23 @@ export async function GET() {
 
     if (!response.ok) {
       // Try to parse error from backend, otherwise use status text
-      let errorBody = { error: `Failed to fetch from Python backend: ${response.statusText}` };
+      let errorBody = {
+        error: `Failed to fetch from Python backend: ${response.statusText}`,
+      };
       try {
         errorBody = await response.json();
       } catch {
         // If parsing JSON fails, errorBody will retain its default value
         // The error from backend is logged in the next line anyway
       }
-      console.error(`Error from Python backend (${PROJECTS_API_ENDPOINT}): ${response.status} - ${JSON.stringify(errorBody)}`);
+      console.error(
+        `Error from Python backend (${PROJECTS_API_ENDPOINT}): ${response.status} - ${JSON.stringify(errorBody)}`
+      );
       return NextResponse.json(errorBody, { status: response.status });
     }
 
     const projects: ApiProcessedProject[] = await response.json();
     return NextResponse.json(projects);
-
   } catch (error: unknown) {
     console.error(`Network or other error when fetching from ${PROJECTS_API_ENDPOINT}:`, error);
     const message = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -77,7 +88,10 @@ export async function DELETE(request: Request) {
     const body: unknown = await request.json();
     if (!isDeleteProjectCachePayload(body)) {
       return NextResponse.json(
-        { error: 'Invalid request body: owner, repo, repo_type, and language are required and must be non-empty strings.' },
+        {
+          error:
+            'Invalid request body: owner, repo, repo_type, and language are required and must be non-empty strings.',
+        },
         { status: 400 }
       );
     }
@@ -92,7 +106,9 @@ export async function DELETE(request: Request) {
       try {
         errorBody = await response.json();
       } catch {}
-      console.error(`Error deleting project cache (${CACHE_API_ENDPOINT}): ${response.status} - ${JSON.stringify(errorBody)}`);
+      console.error(
+        `Error deleting project cache (${CACHE_API_ENDPOINT}): ${response.status} - ${JSON.stringify(errorBody)}`
+      );
       return NextResponse.json(errorBody, { status: response.status });
     }
     return NextResponse.json({ message: 'Project deleted successfully' });

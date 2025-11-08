@@ -19,7 +19,7 @@ const addTokensToRequestBody = (
   model: string = '',
   isCustomModel: boolean = false,
   customModel: string = '',
-  language: string = 'en',
+  language: string = 'en'
 ) => {
   if (token !== '') {
     requestBody.token = token;
@@ -54,8 +54,12 @@ export default function SlidesPage() {
   // Extract tokens from search params
   const token = searchParams.get('token') || '';
   const repoType = searchParams.get('type') || 'github';
-  const localPath = searchParams.get('local_path') ? decodeURIComponent(searchParams.get('local_path') || '') : undefined;
-  const repoUrl = searchParams.get('repo_url') ? decodeURIComponent(searchParams.get('repo_url') || '') : undefined;
+  const localPath = searchParams.get('local_path')
+    ? decodeURIComponent(searchParams.get('local_path') || '')
+    : undefined;
+  const repoUrl = searchParams.get('repo_url')
+    ? decodeURIComponent(searchParams.get('repo_url') || '')
+    : undefined;
   const providerParam = searchParams.get('provider') || '';
   const modelParam = searchParams.get('model') || '';
   const isCustomModelParam = searchParams.get('is_custom_model') === 'true';
@@ -66,14 +70,17 @@ export default function SlidesPage() {
   const { messages } = useLanguage();
 
   // Initialize repo info with useMemo to prevent unnecessary re-renders
-  const repoInfo = useMemo<RepoInfo>(() => ({
-    owner,
-    repo,
-    type: repoType,
-    token: token || null,
-    localPath: localPath || null,
-    repoUrl: repoUrl || null
-  }), [owner, repo, repoType, token, localPath, repoUrl]);
+  const repoInfo = useMemo<RepoInfo>(
+    () => ({
+      owner,
+      repo,
+      type: repoType,
+      token: token || null,
+      localPath: localPath || null,
+      repoUrl: repoUrl || null,
+    }),
+    [owner, repo, repoType, token, localPath, repoUrl]
+  );
 
   // State variables
   const [isLoading, setIsLoading] = useState(false);
@@ -131,8 +138,12 @@ export default function SlidesPage() {
 
       if (response.ok) {
         const cachedData = await response.json();
-        if (cachedData && cachedData.wiki_structure && cachedData.generated_pages &&
-            Object.keys(cachedData.generated_pages).length > 0) {
+        if (
+          cachedData &&
+          cachedData.wiki_structure &&
+          cachedData.generated_pages &&
+          Object.keys(cachedData.generated_pages).length > 0
+        ) {
           console.log('Successfully fetched cached wiki data for slides generation');
           setCachedWikiContent(cachedData);
           return cachedData;
@@ -187,7 +198,7 @@ export default function SlidesPage() {
         const maxContentLength = 30000; // Approximate limit to avoid token issues
 
         // First add high importance pages
-        const highImportancePages = pages.filter(page => page.importance === 'high');
+        const highImportancePages = pages.filter((page) => page.importance === 'high');
         for (const page of highImportancePages) {
           if (generatedPages[page.id] && generatedPages[page.id].content) {
             const content = `## ${page.title}\n${generatedPages[page.id].content}\n\n`;
@@ -210,7 +221,8 @@ export default function SlidesPage() {
               // Check if adding this content would exceed our limit
               if (totalContentLength + content.length > maxContentLength) {
                 // If it would exceed, just add a summary
-                const summaryMatch = generatedPages[page.id].content.match(/# .*?\n\n(.*?)(\n\n|$)/);
+                const summaryMatch =
+                  generatedPages[page.id].content.match(/# .*?\n\n(.*?)(\n\n|$)/);
                 const summary = summaryMatch ? summaryMatch[1].trim() : 'No summary available';
                 const summaryContent = `## ${page.title}\n${summary}\n\n`;
 
@@ -232,9 +244,10 @@ export default function SlidesPage() {
       const planRequestBody: Record<string, unknown> = {
         repo_url: repoUrl,
         type: repoInfo.type,
-        messages: [{
-          role: 'user',
-          content: `Create an engaging outline for a high-quality marketing slide presentation about the ${owner}/${repo} repository.
+        messages: [
+          {
+            role: 'user',
+            content: `Create an engaging outline for a high-quality marketing slide presentation about the ${owner}/${repo} repository.
 
 Based on this wiki content:
 ${wikiContent}
@@ -253,12 +266,22 @@ For example, instead of generic titles like "Introduction" or "Features", use mo
 2. "Unlock Powerful Capabilities with Our Innovative Architecture"
 3. "How ${repo} Transforms Your Workflow"
 
-Give me the numbered list with brief descriptions for each slide. Be creative but professional.`
-        }]
+Give me the numbered list with brief descriptions for each slide. Be creative but professional.`,
+          },
+        ],
       };
 
       // Add tokens if available
-      addTokensToRequestBody(planRequestBody, token, repoInfo.type, providerParam, modelParam, isCustomModelParam, customModelParam, language);
+      addTokensToRequestBody(
+        planRequestBody,
+        token,
+        repoInfo.type,
+        providerParam,
+        modelParam,
+        isCustomModelParam,
+        customModelParam,
+        language
+      );
 
       // Use WebSocket for communication
       let planContent = '';
@@ -266,7 +289,9 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
       try {
         // Create WebSocket URL from the server base URL
         const serverBaseUrl = process.env.SERVER_BASE_URL || 'http://localhost:8001';
-        const wsBaseUrl = serverBaseUrl.replace(/^http/, 'ws')? serverBaseUrl.replace(/^https/, 'wss'): serverBaseUrl.replace(/^http/, 'ws');
+        const wsBaseUrl = serverBaseUrl.replace(/^http/, 'ws')
+          ? serverBaseUrl.replace(/^https/, 'wss')
+          : serverBaseUrl.replace(/^http/, 'ws');
         const wsUrl = `${wsBaseUrl}/ws/chat`;
 
         // Create a new WebSocket connection
@@ -327,7 +352,7 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(planRequestBody)
+          body: JSON.stringify(planRequestBody),
         });
 
         if (!planResponse.ok) {
@@ -360,7 +385,7 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
       }
 
       // Log the plan content for debugging
-      console.log("Received slide plan:", planContent);
+      console.log('Received slide plan:', planContent);
 
       // Try multiple regex patterns to extract slide plan
       let slideMatches: RegExpExecArray[] = [];
@@ -393,7 +418,11 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
         const pattern4 = /^([^:\n]+)(?::\s*(.*?))?$/gm;
         while ((match = pattern4.exec(planContent)) !== null) {
           // Filter out very short lines or lines that look like instructions
-          if (match[1].length > 3 && !match[1].toLowerCase().includes("please") && !match[1].toLowerCase().includes("here")) {
+          if (
+            match[1].length > 3 &&
+            !match[1].toLowerCase().includes('please') &&
+            !match[1].toLowerCase().includes('here')
+          ) {
             slideMatches.push(match);
           }
         }
@@ -401,7 +430,7 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
 
       // If we still don't have matches, create some default slides
       if (slideMatches.length === 0) {
-        console.warn("Could not extract slide plan from response, using default slides");
+        console.warn('Could not extract slide plan from response, using default slides');
 
         // Create default slides
         const defaultSlides = [
@@ -411,12 +440,12 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
           `Features: Main capabilities and functionalities`,
           `Implementation: How it works and technical details`,
           `Use Cases: How to use ${repo} effectively`,
-          `Conclusion: Summary and next steps`
+          `Conclusion: Summary and next steps`,
         ];
 
         // Convert to match format
         slideMatches = defaultSlides.map((slide, index) => {
-          const mockMatch = ["", slide] as unknown as RegExpExecArray;
+          const mockMatch = ['', slide] as unknown as RegExpExecArray;
           mockMatch.index = index;
           mockMatch.input = slide;
           return mockMatch;
@@ -425,24 +454,28 @@ Give me the numbered list with brief descriptions for each slide. Be creative bu
 
       console.log(`Found ${slideMatches.length} slides in the plan`);
 
-
       // Now generate each slide one by one
       const generatedSlides: Slide[] = [];
       let slideCounter = 1;
 
       for (const slideMatch of slideMatches) {
         const slideTitle = slideMatch[1].split(':')[0].trim();
-        const slideDescription = slideMatch[1].includes(':') ? slideMatch[1].split(':')[1].trim() : '';
+        const slideDescription = slideMatch[1].includes(':')
+          ? slideMatch[1].split(':')[1].trim()
+          : '';
 
-        setLoadingMessage(`Generating slide ${slideCounter} of ${slideMatches.length}: ${slideTitle}`);
+        setLoadingMessage(
+          `Generating slide ${slideCounter} of ${slideMatches.length}: ${slideTitle}`
+        );
 
         // Create a request for this specific slide
         const slideRequestBody: Record<string, unknown> = {
           repo_url: repoUrl,
           type: repoInfo.type,
-          messages: [{
-            role: 'user',
-            content: `Create a single HTML slide about the ${owner}/${repo} repository with the title "${slideTitle}".
+          messages: [
+            {
+              role: 'user',
+              content: `Create a single HTML slide about the ${owner}/${repo} repository with the title "${slideTitle}".
 
 This is slide ${slideCounter} of ${slideMatches.length} in the presentation.
 ${slideDescription ? `The slide should cover: ${slideDescription}` : ''}
@@ -529,12 +562,22 @@ Here's a basic structure to build upon (but feel free to be creative):
     }
 </style>
 
-Please return ONLY the HTML with no markdown formatting or code blocks. Just the raw HTML for the slide.`
-          }]
+Please return ONLY the HTML with no markdown formatting or code blocks. Just the raw HTML for the slide.`,
+            },
+          ],
         };
 
         // Add tokens if available
-        addTokensToRequestBody(slideRequestBody, token, repoInfo.type, providerParam, modelParam, isCustomModelParam, customModelParam, language);
+        addTokensToRequestBody(
+          slideRequestBody,
+          token,
+          repoInfo.type,
+          providerParam,
+          modelParam,
+          isCustomModelParam,
+          customModelParam,
+          language
+        );
 
         // Use WebSocket for communication
         let slideContent = '';
@@ -542,7 +585,9 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
         try {
           // Create WebSocket URL from the server base URL
           const serverBaseUrl = process.env.SERVER_BASE_URL || 'http://localhost:8001';
-          const wsBaseUrl = serverBaseUrl.replace(/^http/, 'ws')? serverBaseUrl.replace(/^https/, 'wss'): serverBaseUrl.replace(/^http/, 'ws');
+          const wsBaseUrl = serverBaseUrl.replace(/^http/, 'ws')
+            ? serverBaseUrl.replace(/^https/, 'wss')
+            : serverBaseUrl.replace(/^http/, 'ws');
           const wsUrl = `${wsBaseUrl}/ws/chat`;
 
           // Create a new WebSocket connection
@@ -603,7 +648,7 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(slideRequestBody)
+            body: JSON.stringify(slideRequestBody),
           });
 
           if (!slideResponse.ok) {
@@ -644,14 +689,14 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
         const codeBlockMatch = slideContent.match(/```(?:html)?\s*([\s\S]*?)\s*```/);
         if (codeBlockMatch) {
           slideHtml = codeBlockMatch[1];
-          console.log("Extracted HTML from code block");
+          console.log('Extracted HTML from code block');
         }
         // Try to extract content between <div class="slide"> and closing </div>
         else if (slideContent.includes('<div class="slide"')) {
           const divMatch = slideContent.match(/<div class="slide"[\s\S]*?<\/div>\s*<\/div>/);
           if (divMatch) {
             slideHtml = divMatch[0];
-            console.log("Extracted HTML from div tags");
+            console.log('Extracted HTML from div tags');
           }
         }
         // Try to extract any HTML-like content
@@ -675,7 +720,7 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
 
         // If we still don't have HTML, use the raw content
         if (!slideHtml) {
-          console.log("Using raw content as HTML");
+          console.log('Using raw content as HTML');
           slideHtml = slideContent;
         }
 
@@ -858,7 +903,7 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
           id: `slide-${slideCounter}`,
           title: slideTitle,
           content: slideDescription || slideTitle,
-          html: slideHtml
+          html: slideHtml,
         };
 
         // Add to our slides array
@@ -872,7 +917,6 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
 
       // Set the final slides
       setSlides(generatedSlides);
-
     } catch (err) {
       console.error('Error generating slides content:', err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -880,7 +924,21 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
       setIsLoading(false);
       setLoadingMessage(undefined);
     }
-  }, [owner, repo, repoInfo, token, providerParam, modelParam, isCustomModelParam, customModelParam, language, isLoading, messages.loading, cachedWikiContent, fetchCachedWikiContent]);
+  }, [
+    owner,
+    repo,
+    repoInfo,
+    token,
+    providerParam,
+    modelParam,
+    isCustomModelParam,
+    customModelParam,
+    language,
+    isLoading,
+    messages.loading,
+    cachedWikiContent,
+    fetchCachedWikiContent,
+  ]);
 
   // Export slides content
   const exportSlides = useCallback(async () => {
@@ -1018,7 +1076,7 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
   </style>
 </head>
 <body>
-  ${slides.map(slide => `<div class="slide-container">${slide.html}</div>`).join('\n')}
+  ${slides.map((slide) => `<div class="slide-container">${slide.html}</div>`).join('\n')}
 
   <!-- Navigation controls (only visible in browser) -->
   <div class="nav-controls">
@@ -1113,7 +1171,6 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-
     } catch (err) {
       console.error('Error exporting slides:', err);
       setExportError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -1125,18 +1182,18 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
   // Navigation functions
   const goToNextSlide = useCallback(() => {
     if (currentSlideIndex < slides.length - 1) {
-      setCurrentSlideIndex(prev => prev + 1);
+      setCurrentSlideIndex((prev) => prev + 1);
     }
   }, [currentSlideIndex, slides.length]);
 
   const goToPrevSlide = useCallback(() => {
     if (currentSlideIndex > 0) {
-      setCurrentSlideIndex(prev => prev - 1);
+      setCurrentSlideIndex((prev) => prev - 1);
     }
   }, [currentSlideIndex]);
 
   const toggleFullscreen = useCallback(() => {
-    setIsFullscreen(prev => !prev);
+    setIsFullscreen((prev) => !prev);
   }, []);
 
   // Handle keyboard navigation
@@ -1176,7 +1233,9 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
   }, [generateSlidesContent, fetchCachedWikiContent]);
 
   return (
-    <div className={`min-h-screen flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-[#0d1117]' : 'bg-[var(--background)]'}`}>
+    <div
+      className={`min-h-screen flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-[#0d1117]' : 'bg-[var(--background)]'}`}
+    >
       {/* Header - Hide in fullscreen mode */}
       {!isFullscreen && (
         <header className="sticky top-0 z-10 bg-[var(--card-bg)] border-b border-[var(--border-color)] shadow-sm">
@@ -1224,7 +1283,9 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
       )}
 
       {/* Main content */}
-      <main className={`flex-1 flex flex-col ${isFullscreen ? 'p-0' : 'container mx-auto px-4 py-6'}`}>
+      <main
+        className={`flex-1 flex flex-col ${isFullscreen ? 'p-0' : 'container mx-auto px-4 py-6'}`}
+      >
         {isLoading && !slides.length ? (
           <div className="flex flex-col items-center justify-center p-8 flex-grow">
             <div className="w-12 h-12 border-4 border-[var(--accent-primary)]/30 border-t-[var(--accent-primary)] rounded-full animate-spin mb-4"></div>
@@ -1232,13 +1293,17 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
           </div>
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4 mb-6">
-            <h3 className="text-red-800 dark:text-red-400 font-medium mb-2">{messages.common?.error || 'Error'}</h3>
+            <h3 className="text-red-800 dark:text-red-400 font-medium mb-2">
+              {messages.common?.error || 'Error'}
+            </h3>
             <p className="text-red-700 dark:text-red-300">{error}</p>
           </div>
         ) : slides.length > 0 ? (
           <div className="flex flex-col flex-grow">
             {/* Slide content */}
-            <div className={`flex-grow flex flex-col items-center justify-center ${isFullscreen ? 'p-0 bg-[#0d1117]' : 'bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg shadow-sm p-6 mb-4'}`}>
+            <div
+              className={`flex-grow flex flex-col items-center justify-center ${isFullscreen ? 'p-0 bg-[#0d1117]' : 'bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg shadow-sm p-6 mb-4'}`}
+            >
               {exportError && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3 mb-4 w-full">
                   <p className="text-red-700 dark:text-red-300 text-sm">{exportError}</p>
@@ -1250,13 +1315,23 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
                 className={`${isFullscreen ? 'w-full h-full' : 'w-full max-w-[1280px] aspect-[16/9]'} flex items-center justify-center overflow-hidden`}
               >
                 {/* Include Font Awesome for icons */}
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
-                <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: slides[currentSlideIndex]?.html || '' }} />
+                <link
+                  rel="stylesheet"
+                  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
+                />
+                <div
+                  className="w-full h-full"
+                  dangerouslySetInnerHTML={{
+                    __html: slides[currentSlideIndex]?.html || '',
+                  }}
+                />
               </div>
             </div>
 
             {/* Navigation controls */}
-            <div className={`flex items-center justify-between ${isFullscreen ? 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#0d1117]/80 px-6 py-3 rounded-full z-10 shadow-lg' : 'mt-4'}`}>
+            <div
+              className={`flex items-center justify-between ${isFullscreen ? 'fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#0d1117]/80 px-6 py-3 rounded-full z-10 shadow-lg' : 'mt-4'}`}
+            >
               <button
                 onClick={goToPrevSlide}
                 disabled={currentSlideIndex === 0}
@@ -1290,7 +1365,10 @@ Please return ONLY the HTML with no markdown formatting or code blocks. Just the
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-8 flex-grow">
-            <p className="text-[var(--foreground)]">{messages.slides?.noSlides || 'No slides generated yet. Click the refresh button to generate slides.'}</p>
+            <p className="text-[var(--foreground)]">
+              {messages.slides?.noSlides ||
+                'No slides generated yet. Click the refresh button to generate slides.'}
+            </p>
           </div>
         )}
       </main>

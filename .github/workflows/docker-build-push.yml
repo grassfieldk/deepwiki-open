@@ -2,22 +2,22 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   # Allow manual trigger
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  
+
 concurrency:
   # This concurrency group ensures that only one job in the group runs at a time.
   # If a new job is triggered, the previous one will be canceled.
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-  
+
 jobs:
   build-and-push:
     strategy:
@@ -39,7 +39,7 @@ jobs:
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           echo "GHCR_IMAGE=ghcr.io/${GITHUB_REPOSITORY@L}" >> $GITHUB_ENV
-      
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -75,21 +75,21 @@ jobs:
           outputs: type=image,name=${{ env.GHCR_IMAGE }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }},oci-mediatypes=true
           cache-from: type=gha,scope=${{ github.repository }}-${{ github.ref_name }}-${{ matrix.platform }}
           cache-to: type=gha,mode=max,scope=${{ github.repository }}-${{ github.ref_name }}-${{ matrix.platform }}
-          
+
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "/tmp/digests/${digest#sha256:}"
 
-      - name: Upload digest 
+      - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
-  
+
   merge:
     name: merge Docker manifests
     runs-on: ubuntu-latest
@@ -105,14 +105,13 @@ jobs:
         id: prepare
         run: |
           echo "GHCR_IMAGE=ghcr.io/${GITHUB_REPOSITORY@L}" >> $GITHUB_ENV
-      
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests
           pattern: digests-*
           merge-multiple: true
-
 
       - name: Docker meta
         id: meta
@@ -152,20 +151,20 @@ jobs:
         id: manifest-annotate
         continue-on-error: true
         run: |
-              docker buildx imagetools create \
-                $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-                --annotation='index:org.opencontainers.image.description=${{ github.event.repository.description }}' \
-                --annotation='index:org.opencontainers.image.created=${{ steps.timestamp.outputs.timestamp }}' \
-                --annotation='index:org.opencontainers.image.url=${{ github.event.repository.url }}' \
-                --annotation='index:org.opencontainers.image.source=${{ github.event.repository.url }}' \
-                $(printf '${{ env.GHCR_IMAGE }}@sha256:%s ' *)
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            --annotation='index:org.opencontainers.image.description=${{ github.event.repository.description }}' \
+            --annotation='index:org.opencontainers.image.created=${{ steps.timestamp.outputs.timestamp }}' \
+            --annotation='index:org.opencontainers.image.url=${{ github.event.repository.url }}' \
+            --annotation='index:org.opencontainers.image.source=${{ github.event.repository.url }}' \
+            $(printf '${{ env.GHCR_IMAGE }}@sha256:%s ' *)
 
       - name: Create manifest list and push without annotations
         if: steps.manifest-annotate.outcome == 'failure'
         working-directory: /tmp/digests
         run: |
-              docker buildx imagetools create  $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-                $(printf '${{ env.GHCR_IMAGE }}@sha256:%s ' *)
+          docker buildx imagetools create  $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.GHCR_IMAGE }}@sha256:%s ' *)
 
       - name: Inspect image
         id: inspect

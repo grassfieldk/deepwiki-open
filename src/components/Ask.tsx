@@ -1,13 +1,17 @@
 'use client';
 
-import React, {useState, useRef, useEffect} from 'react';
-import {FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Markdown from './Markdown';
 import { useLanguage } from '@/contexts/LanguageContext';
 import RepoInfo from '@/types/repoinfo';
 import getRepoUrl from '@/utils/getRepoUrl';
 import ModelSelectionModal from './ModelSelectionModal';
-import { createChatWebSocket, closeWebSocket, ChatCompletionRequest } from '@/utils/websocketClient';
+import {
+  createChatWebSocket,
+  closeWebSocket,
+  ChatCompletionRequest,
+} from '@/utils/websocketClient';
 
 interface Model {
   id: string;
@@ -50,7 +54,7 @@ const Ask: React.FC<AskProps> = ({
   isCustomModel = false,
   customModel = '',
   language = 'en',
-  onRef
+  onRef,
 }) => {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
@@ -125,11 +129,13 @@ const Ask: React.FC<AskProps> = ({
         const data = await response.json();
 
         // use latest provider/model ref to check
-        if(providerRef.current == '' || modelRef.current== '') {
+        if (providerRef.current == '' || modelRef.current == '') {
           setSelectedProvider(data.defaultProvider);
 
           // Find the default provider and set its default model
-          const selectedProvider = data.providers.find((p:Provider) => p.id === data.defaultProvider);
+          const selectedProvider = data.providers.find(
+            (p: Provider) => p.id === data.defaultProvider
+          );
           if (selectedProvider && selectedProvider.models.length > 0) {
             setSelectedModel(selectedProvider.models[0].id);
           }
@@ -143,8 +149,8 @@ const Ask: React.FC<AskProps> = ({
         setIsLoading(false);
       }
     };
-    if(provider == '' || model == '') {
-      fetchModel()
+    if (provider == '' || model == '') {
+      fetchModel();
     }
   }, [provider, model]);
 
@@ -160,17 +166,17 @@ const Ask: React.FC<AskProps> = ({
       inputRef.current.focus();
     }
   };
-  const downloadresponse = () =>{
-  const blob = new Blob([response], { type: 'text/markdown' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `response-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.md`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+  const downloadresponse = () => {
+    const blob = new Blob([response], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `response-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   // Function to check if research is complete based on response content
   const checkIfResearchComplete = (content: string): boolean => {
@@ -180,28 +186,34 @@ const Ask: React.FC<AskProps> = ({
     }
 
     // Check for conclusion sections that don't indicate further research
-    if ((content.includes('## Conclusion') || content.includes('## Summary')) &&
+    if (
+      (content.includes('## Conclusion') || content.includes('## Summary')) &&
       !content.includes('I will now proceed to') &&
       !content.includes('Next Steps') &&
-      !content.includes('next iteration')) {
+      !content.includes('next iteration')
+    ) {
       return true;
     }
 
     // Check for phrases that explicitly indicate completion
-    if (content.includes('This concludes our research') ||
+    if (
+      content.includes('This concludes our research') ||
       content.includes('This completes our investigation') ||
       content.includes('This concludes the deep research process') ||
       content.includes('Key Findings and Implementation Details') ||
       content.includes('In conclusion,') ||
-      (content.includes('Final') && content.includes('Conclusion'))) {
+      (content.includes('Final') && content.includes('Conclusion'))
+    ) {
       return true;
     }
 
     // Check for topic-specific completion indicators
-    if (content.includes('Dockerfile') &&
+    if (
+      content.includes('Dockerfile') &&
       (content.includes('This Dockerfile') || content.includes('The Dockerfile')) &&
       !content.includes('Next Steps') &&
-      !content.includes('In the next iteration')) {
+      !content.includes('In the next iteration')
+    ) {
       return true;
     }
 
@@ -218,20 +230,22 @@ const Ask: React.FC<AskProps> = ({
           title: 'Research Plan',
           content: content,
           iteration: 1,
-          type: 'plan'
+          type: 'plan',
         };
       }
     }
 
     // Check for research updates (iterations 1-4)
     if (iteration >= 1 && iteration <= 4) {
-      const updateMatch = content.match(new RegExp(`## Research Update ${iteration}([\\s\\S]*?)(?:## Next Steps|$)`));
+      const updateMatch = content.match(
+        new RegExp(`## Research Update ${iteration}([\\s\\S]*?)(?:## Next Steps|$)`)
+      );
       if (updateMatch) {
         return {
           title: `Research Update ${iteration}`,
           content: content,
           iteration: iteration,
-          type: 'update'
+          type: 'update',
         };
       }
     }
@@ -244,7 +258,7 @@ const Ask: React.FC<AskProps> = ({
           title: 'Final Conclusion',
           content: content,
           iteration: iteration,
-          type: 'conclusion'
+          type: 'conclusion',
         };
       }
     }
@@ -282,7 +296,7 @@ const Ask: React.FC<AskProps> = ({
     if (!deepResearch || researchComplete || !response || isLoading) return;
 
     // Add a small delay to allow the user to read the current response
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     setIsLoading(true);
 
@@ -295,12 +309,12 @@ const Ask: React.FC<AskProps> = ({
         ...conversationHistory,
         {
           role: 'assistant',
-          content: currentResponse
+          content: currentResponse,
         },
         {
           role: 'user',
-          content: '[DEEP RESEARCH] Continue the research'
-        }
+          content: '[DEEP RESEARCH] Continue the research',
+        },
       ];
 
       // Update conversation history
@@ -317,10 +331,13 @@ const Ask: React.FC<AskProps> = ({
       const requestBody: ChatCompletionRequest = {
         repo_url: getRepoUrl(repoInfo),
         type: repoInfo.type,
-        messages: newHistory.map(msg => ({ role: msg.role as 'user' | 'assistant', content: msg.content })),
+        messages: newHistory.map((msg) => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        })),
         provider: selectedProvider,
         model: isCustomSelectedModel ? customSelectedModel : selectedModel,
-        language: language
+        language: language,
       };
 
       // Add tokens if available
@@ -346,9 +363,11 @@ const Ask: React.FC<AskProps> = ({
             const stage = extractResearchStage(fullResponse, newIteration);
             if (stage) {
               // Add the stage to the research stages if it's not already there
-              setResearchStages(prev => {
+              setResearchStages((prev) => {
                 // Check if we already have this stage
-                const existingStageIndex = prev.findIndex(s => s.iteration === stage.iteration && s.type === stage.type);
+                const existingStageIndex = prev.findIndex(
+                  (s) => s.iteration === stage.iteration && s.type === stage.type
+                );
                 if (existingStageIndex >= 0) {
                   // Update existing stage
                   const newStages = [...prev];
@@ -368,7 +387,9 @@ const Ask: React.FC<AskProps> = ({
         // Error handler
         (error: Event) => {
           console.error('WebSocket error:', error);
-          setResponse(prev => prev + '\n\nError: WebSocket connection failed. Falling back to HTTP...');
+          setResponse(
+            (prev) => prev + '\n\nError: WebSocket connection failed. Falling back to HTTP...'
+          );
 
           // Fallback to HTTP if WebSocket fails
           fallbackToHttp(requestBody);
@@ -383,7 +404,8 @@ const Ask: React.FC<AskProps> = ({
 
           if (forceComplete && !isComplete) {
             // If we're forcing completion, append a comprehensive conclusion to the response
-            const completionNote = "\n\n## Final Conclusion\nAfter multiple iterations of deep research, we've gathered significant insights about this topic. This concludes our investigation process, having reached the maximum number of research iterations. The findings presented across all iterations collectively form our comprehensive answer to the original question.";
+            const completionNote =
+              "\n\n## Final Conclusion\nAfter multiple iterations of deep research, we've gathered significant insights about this topic. This concludes our investigation process, having reached the maximum number of research iterations. The findings presented across all iterations collectively form our comprehensive answer to the original question.";
             fullResponse += completionNote;
             setResponse(fullResponse);
             setResearchComplete(true);
@@ -396,7 +418,7 @@ const Ask: React.FC<AskProps> = ({
       );
     } catch (error) {
       console.error('Error during API call:', error);
-      setResponse(prev => prev + '\n\nError: Failed to continue research. Please try again.');
+      setResponse((prev) => prev + '\n\nError: Failed to continue research. Please try again.');
       setResearchComplete(true);
       setIsLoading(false);
     }
@@ -411,7 +433,7 @@ const Ask: React.FC<AskProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
 
       if (!apiResponse.ok) {
@@ -441,8 +463,10 @@ const Ask: React.FC<AskProps> = ({
           const stage = extractResearchStage(fullResponse, researchIteration);
           if (stage) {
             // Add the stage to the research stages
-            setResearchStages(prev => {
-              const existingStageIndex = prev.findIndex(s => s.iteration === stage.iteration && s.type === stage.type);
+            setResearchStages((prev) => {
+              const existingStageIndex = prev.findIndex(
+                (s) => s.iteration === stage.iteration && s.type === stage.type
+              );
               if (existingStageIndex >= 0) {
                 const newStages = [...prev];
                 newStages[existingStageIndex] = stage;
@@ -463,7 +487,8 @@ const Ask: React.FC<AskProps> = ({
 
       if (forceComplete && !isComplete) {
         // If we're forcing completion, append a comprehensive conclusion to the response
-        const completionNote = "\n\n## Final Conclusion\nAfter multiple iterations of deep research, we've gathered significant insights about this topic. This concludes our investigation process, having reached the maximum number of research iterations. The findings presented across all iterations collectively form our comprehensive answer to the original question.";
+        const completionNote =
+          "\n\n## Final Conclusion\nAfter multiple iterations of deep research, we've gathered significant insights about this topic. This concludes our investigation process, having reached the maximum number of research iterations. The findings presented across all iterations collectively form our comprehensive answer to the original question.";
         fullResponse += completionNote;
         setResponse(fullResponse);
         setResearchComplete(true);
@@ -472,7 +497,7 @@ const Ask: React.FC<AskProps> = ({
       }
     } catch (error) {
       console.error('Error during HTTP fallback:', error);
-      setResponse(prev => prev + '\n\nError: Failed to get a response. Please try again.');
+      setResponse((prev) => prev + '\n\nError: Failed to get a response. Please try again.');
       setResearchComplete(true);
     } finally {
       setIsLoading(false);
@@ -504,9 +529,11 @@ const Ask: React.FC<AskProps> = ({
       const stage = extractResearchStage(response, researchIteration);
       if (stage) {
         // Add or update the stage in the research stages
-        setResearchStages(prev => {
+        setResearchStages((prev) => {
           // Check if we already have this stage
-          const existingStageIndex = prev.findIndex(s => s.iteration === stage.iteration && s.type === stage.type);
+          const existingStageIndex = prev.findIndex(
+            (s) => s.iteration === stage.iteration && s.type === stage.type
+          );
           if (existingStageIndex >= 0) {
             // Update existing stage
             const newStages = [...prev];
@@ -519,8 +546,10 @@ const Ask: React.FC<AskProps> = ({
         });
 
         // Update current stage index to point to this stage
-        setCurrentStageIndex(prev => {
-          const newIndex = researchStages.findIndex(s => s.iteration === stage.iteration && s.type === stage.type);
+        setCurrentStageIndex((prev) => {
+          const newIndex = researchStages.findIndex(
+            (s) => s.iteration === stage.iteration && s.type === stage.type
+          );
           return newIndex >= 0 ? newIndex : prev;
         });
       }
@@ -548,7 +577,7 @@ const Ask: React.FC<AskProps> = ({
       // Create initial message
       const initialMessage: Message = {
         role: 'user',
-        content: deepResearch ? `[DEEP RESEARCH] ${question}` : question
+        content: deepResearch ? `[DEEP RESEARCH] ${question}` : question,
       };
 
       // Set initial conversation history
@@ -559,10 +588,13 @@ const Ask: React.FC<AskProps> = ({
       const requestBody: ChatCompletionRequest = {
         repo_url: getRepoUrl(repoInfo),
         type: repoInfo.type,
-        messages: newHistory.map(msg => ({ role: msg.role as 'user' | 'assistant', content: msg.content })),
+        messages: newHistory.map((msg) => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        })),
         provider: selectedProvider,
         model: isCustomSelectedModel ? customSelectedModel : selectedModel,
-        language: language
+        language: language,
       };
 
       // Add tokens if available
@@ -596,7 +628,9 @@ const Ask: React.FC<AskProps> = ({
         // Error handler
         (error: Event) => {
           console.error('WebSocket error:', error);
-          setResponse(prev => prev + '\n\nError: WebSocket connection failed. Falling back to HTTP...');
+          setResponse(
+            (prev) => prev + '\n\nError: WebSocket connection failed. Falling back to HTTP...'
+          );
 
           // Fallback to HTTP if WebSocket fails
           fallbackToHttp(requestBody);
@@ -620,7 +654,7 @@ const Ask: React.FC<AskProps> = ({
       );
     } catch (error) {
       console.error('Error during API call:', error);
-      setResponse(prev => prev + '\n\nError: Failed to get a response. Please try again.');
+      setResponse((prev) => prev + '\n\nError: Failed to get a response. Please try again.');
       setResearchComplete(true);
       setIsLoading(false);
     }
@@ -647,9 +681,21 @@ const Ask: React.FC<AskProps> = ({
             onClick={() => setIsModelSelectionModalOpen(true)}
             className="text-xs px-2.5 py-1 rounded border border-[var(--border-color)]/40 bg-[var(--background)]/10 text-[var(--foreground)]/80 hover:bg-[var(--background)]/30 hover:text-[var(--foreground)] transition-colors flex items-center gap-1.5"
           >
-            <span>{selectedProvider}/{isCustomSelectedModel ? customSelectedModel : selectedModel}</span>
-            <svg className="h-3.5 w-3.5 text-[var(--accent-primary)]/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            <span>
+              {selectedProvider}/{isCustomSelectedModel ? customSelectedModel : selectedModel}
+            </span>
+            <svg
+              className="h-3.5 w-3.5 text-[var(--accent-primary)]/70"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
             </svg>
           </button>
         </div>
@@ -662,7 +708,9 @@ const Ask: React.FC<AskProps> = ({
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder={messages.ask?.placeholder || 'What would you like to know about this codebase?'}
+              placeholder={
+                messages.ask?.placeholder || 'What would you like to know about this codebase?'
+              }
               className="block w-full rounded-md border border-[var(--border-color)] bg-[var(--input-bg)] text-[var(--foreground)] px-5 py-3.5 text-base shadow-sm focus:border-[var(--accent-primary)] focus:ring-2 focus:ring-[var(--accent-primary)]/30 focus:outline-none transition-all"
               style={{ paddingRight: `${buttonWidth + 24}px` }}
               disabled={isLoading}
@@ -682,7 +730,12 @@ const Ask: React.FC<AskProps> = ({
               ) : (
                 <>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                    />
                   </svg>
                   <span>{messages.ask?.askButton || 'Ask'}</span>
                 </>
@@ -702,8 +755,12 @@ const Ask: React.FC<AskProps> = ({
                     onChange={() => setDeepResearch(!deepResearch)}
                     className="sr-only"
                   />
-                  <div className={`w-10 h-5 rounded-full transition-colors ${deepResearch ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
-                  <div className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform transform ${deepResearch ? 'translate-x-5' : ''}`}></div>
+                  <div
+                    className={`w-10 h-5 rounded-full transition-colors ${deepResearch ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                  ></div>
+                  <div
+                    className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform transform ${deepResearch ? 'translate-x-5' : ''}`}
+                  ></div>
                 </div>
               </label>
               <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 w-72 z-10">
@@ -711,13 +768,27 @@ const Ask: React.FC<AskProps> = ({
                   <div className="absolute -bottom-2 left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                   <p className="mb-1">Deep Research conducts a multi-turn investigation process:</p>
                   <ul className="list-disc pl-4 text-xs">
-                    <li><strong>Initial Research:</strong> Creates a research plan and initial findings</li>
-                    <li><strong>Iteration 1:</strong> Explores specific aspects in depth</li>
-                    <li><strong>Iteration 2:</strong> Investigates remaining questions</li>
-                    <li><strong>Iterations 3-4:</strong> Dives deeper into complex areas</li>
-                    <li><strong>Final Conclusion:</strong> Comprehensive answer based on all iterations</li>
+                    <li>
+                      <strong>Initial Research:</strong> Creates a research plan and initial
+                      findings
+                    </li>
+                    <li>
+                      <strong>Iteration 1:</strong> Explores specific aspects in depth
+                    </li>
+                    <li>
+                      <strong>Iteration 2:</strong> Investigates remaining questions
+                    </li>
+                    <li>
+                      <strong>Iterations 3-4:</strong> Dives deeper into complex areas
+                    </li>
+                    <li>
+                      <strong>Final Conclusion:</strong> Comprehensive answer based on all
+                      iterations
+                    </li>
                   </ul>
-                  <p className="mt-1 text-xs italic">The AI automatically continues research until complete (up to 5 iterations)</p>
+                  <p className="mt-1 text-xs italic">
+                    The AI automatically continues research until complete (up to 5 iterations)
+                  </p>
                 </div>
               </div>
             </div>
@@ -734,10 +805,7 @@ const Ask: React.FC<AskProps> = ({
         {/* Response area */}
         {response && (
           <div className="border-t border-gray-200 dark:border-gray-700 mt-4">
-            <div
-              ref={responseRef}
-              className="p-4 max-h-[500px] overflow-y-auto"
-            >
+            <div ref={responseRef} className="p-4 max-h-[500px] overflow-y-auto">
               <Markdown content={response} />
             </div>
 
@@ -774,29 +842,34 @@ const Ask: React.FC<AskProps> = ({
                 </div>
               )}
 
-            <div className="flex items-center space-x-2">
-              {/* Download button */}
-              <button
-                onClick={downloadresponse}
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 px-2 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center gap-1"
-                title="Download response as markdown file"
-              >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Download
-              </button>
+              <div className="flex items-center space-x-2">
+                {/* Download button */}
+                <button
+                  onClick={downloadresponse}
+                  className="text-xs text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 px-2 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center gap-1"
+                  title="Download response as markdown file"
+                >
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Download
+                </button>
 
-              {/* Clear button */}
-              <button
-                id="ask-clear-conversation"
-                onClick={clearConversation}
-                className="text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 px-2 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-              >
-                Clear conversation
-              </button>
-            </div>
+                {/* Clear button */}
+                <button
+                  id="ask-clear-conversation"
+                  onClick={clearConversation}
+                  className="text-xs text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 px-2 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+                >
+                  Clear conversation
+                </button>
               </div>
+            </div>
           </div>
         )}
 
@@ -811,10 +884,10 @@ const Ask: React.FC<AskProps> = ({
               </div>
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 {deepResearch
-                  ? (researchIteration === 0
-                    ? "Planning research approach..."
-                    : `Research iteration ${researchIteration} in progress...`)
-                  : "Thinking..."}
+                  ? researchIteration === 0
+                    ? 'Planning research approach...'
+                    : `Research iteration ${researchIteration} in progress...`
+                  : 'Thinking...'}
               </span>
             </div>
             {deepResearch && (

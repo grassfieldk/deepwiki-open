@@ -11,14 +11,16 @@ export async function GET() {
     const backendResponse = await fetch(targetUrl, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-      }
+        Accept: 'application/json',
+      },
     });
 
     // If the backend service responds with an error
     if (!backendResponse.ok) {
       return NextResponse.json(
-        { error: `Backend service responded with status: ${backendResponse.status}` },
+        {
+          error: `Backend service responded with status: ${backendResponse.status}`,
+        },
         { status: backendResponse.status }
       );
     }
@@ -27,11 +29,11 @@ export async function GET() {
     const modelConfig = await backendResponse.json();
     return NextResponse.json(modelConfig);
   } catch (error) {
-    console.error('Error fetching model configurations:', error);    
+    console.error('Error fetching model configurations:', error);
     return new NextResponse(JSON.stringify({ error: error }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 

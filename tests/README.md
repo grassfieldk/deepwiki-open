@@ -19,26 +19,31 @@ tests/
 ## Running Tests
 
 ### All Tests
+
 ```bash
 python tests/run_tests.py
 ```
 
 ### Unit Tests Only
+
 ```bash
 python tests/run_tests.py --unit
 ```
 
 ### Integration Tests Only
+
 ```bash
 python tests/run_tests.py --integration
 ```
 
 ### API Tests Only
+
 ```bash
 python tests/run_tests.py --api
 ```
 
 ### Individual Test Files
+
 ```bash
 # Unit tests
 python tests/unit/test_google_embedder.py
@@ -54,12 +59,15 @@ python tests/api/test_api.py
 ## Test Requirements
 
 ### Environment Variables
+
 - `GOOGLE_API_KEY`: Required for Google AI embedder tests
 - `OPENAI_API_KEY`: Required for some integration tests
 - `DEEPWIKI_EMBEDDER_TYPE`: Set to 'google' for Google embedder tests
 
 ### Dependencies
+
 All test dependencies are included in the main project requirements:
+
 - `python-dotenv`: For loading environment variables
 - `adalflow`: Core framework for embeddings
 - `google-generativeai`: Google AI API client
@@ -68,18 +76,21 @@ All test dependencies are included in the main project requirements:
 ## Test Categories
 
 ### Unit Tests
+
 - **Purpose**: Test individual components in isolation
 - **Speed**: Fast (< 1 second per test)
 - **Dependencies**: Minimal external dependencies
 - **Examples**: Testing embedder response parsing, configuration loading
 
-### Integration Tests  
+### Integration Tests
+
 - **Purpose**: Test how components work together
 - **Speed**: Medium (1-10 seconds per test)
 - **Dependencies**: May require API keys and external services
 - **Examples**: End-to-end embedding pipeline, RAG workflow
 
 ### API Tests
+
 - **Purpose**: Test HTTP endpoints and WebSocket connections
 - **Speed**: Medium-slow (5-30 seconds per test)
 - **Dependencies**: Requires running API server
@@ -97,6 +108,7 @@ All test dependencies are included in the main project requirements:
 ## Troubleshooting
 
 ### Import Errors
+
 If you get import errors, ensure the test file includes the project root path setup:
 
 ```python
@@ -109,6 +121,7 @@ sys.path.insert(0, str(project_root))
 ```
 
 ### API Key Issues
+
 Make sure you have a `.env` file in the project root with the required API keys:
 
 ```
@@ -118,6 +131,7 @@ DEEPWIKI_EMBEDDER_TYPE=google
 ```
 
 ### Server Dependencies
+
 For API tests, ensure the FastAPI server is running on the expected port:
 
 ```bash

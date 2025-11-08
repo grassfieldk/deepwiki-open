@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'text/event-stream', // Indicate that we expect a stream
+        Accept: 'text/event-stream', // Indicate that we expect a stream
       },
       body: JSON.stringify(requestBody),
     });
@@ -43,7 +43,9 @@ export async function POST(req: NextRequest) {
 
     // Ensure the backend response has a body to stream
     if (!backendResponse.body) {
-      return new NextResponse('Stream body from backend is null', { status: 500 });
+      return new NextResponse('Stream body from backend is null', {
+        status: 500,
+      });
     }
 
     // Create a new ReadableStream to pipe the data from the backend to the client
@@ -68,7 +70,7 @@ export async function POST(req: NextRequest) {
       },
       cancel(reason) {
         console.log('Client cancelled stream request:', reason);
-      }
+      },
     });
 
     // Set up headers for the response to the client
@@ -85,7 +87,6 @@ export async function POST(req: NextRequest) {
       status: backendResponse.status, // Should be 200 for a successful stream start
       headers: responseHeaders,
     });
-
   } catch (error) {
     console.error('Error in API proxy route (/api/chat/stream):', error);
     let errorMessage = 'Internal Server Error in proxy';
